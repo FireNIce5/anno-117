@@ -1,3 +1,3 @@
-Cloned from https://github.com/NiHoel/Anno1800Calculator
+Cloned from https://github.com/anno-mods/anno-117-calculator
   
-release: v11.1 - 61ab6df - Jun 1, 2024
+release: v1.7 - 863b11d - Dec 25, 2025
