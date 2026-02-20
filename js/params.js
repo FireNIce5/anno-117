@@ -23398,7 +23398,7 @@ if(window.params == null)window.params={
         "brazilian": "Residência de libertus",
         "english": "Libertus Residence",
         "french": "Résidence de Liberti",
-        "german": "Liberti",
+        "german": "Liberti-Wohnhaus",
         "italian": "Residenza del liberto",
         "japanese": "​リベルトゥス​の​住居",
         "korean": "​자유민 ​주거지",
@@ -23436,7 +23436,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 71188,
-          "needConsumptionRate": 0.0147
+          "needConsumptionRate": 0.01428
         }
       ],
       "populationLevel": 1499,
@@ -23454,7 +23454,7 @@ if(window.params == null)window.params={
         "brazilian": "Residência de plebeu",
         "english": "Plebeian Residence",
         "french": "Résidence de Plébéiens",
-        "german": "Plebejer",
+        "german": "Plebejer-Wohnhaus",
         "italian": "Residenza del plebeo",
         "japanese": "​プレブス​の​住居",
         "korean": "​평민 ​주거지",
@@ -23492,11 +23492,11 @@ if(window.params == null)window.params={
         },
         {
           "need": 71188,
-          "needConsumptionRate": 0.0118
+          "needConsumptionRate": 0.01154
         },
         {
           "need": 2689,
-          "needConsumptionRate": 0.01102
+          "needConsumptionRate": 0.01079
         },
         {
           "need": 2746,
@@ -23542,7 +23542,7 @@ if(window.params == null)window.params={
         "brazilian": "Residência de eques",
         "english": "Eques Residence",
         "french": "Résidence d'Equites",
-        "german": "Equites",
+        "german": "Equites-Wohnhaus",
         "italian": "Residenza dell'equite",
         "japanese": "​エクィテス​の​住居",
         "korean": "​기사 ​주거지",
@@ -23580,11 +23580,11 @@ if(window.params == null)window.params={
         },
         {
           "need": 71188,
-          "needConsumptionRate": 0.00987
+          "needConsumptionRate": 0.00968
         },
         {
           "need": 2689,
-          "needConsumptionRate": 0.00932
+          "needConsumptionRate": 0.00915
         },
         {
           "need": 2746,
@@ -23640,7 +23640,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 2773,
-          "needConsumptionRate": 0.005717
+          "needConsumptionRate": 0.005669
         },
         {
           "need": 2779,
@@ -23648,7 +23648,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 2780,
-          "needConsumptionRate": 0.00498
+          "needConsumptionRate": 0.004922
         },
         {
           "need": 2755,
@@ -23674,7 +23674,7 @@ if(window.params == null)window.params={
         "brazilian": "Residência de patrício",
         "english": "Patrician Residence",
         "french": "Résidence de Patriciens",
-        "german": "Patrizier",
+        "german": "Patrizier-Wohnhaus",
         "italian": "Residenza del patrizio",
         "japanese": "​パトリキ​の​住居",
         "korean": "​파트리키 ​주거지",
@@ -23712,11 +23712,11 @@ if(window.params == null)window.params={
         },
         {
           "need": 71188,
-          "needConsumptionRate": 0.008471
+          "needConsumptionRate": 0.00833
         },
         {
           "need": 2689,
-          "needConsumptionRate": 0.008065
+          "needConsumptionRate": 0.007935
         },
         {
           "need": 2746,
@@ -23772,7 +23772,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 2773,
-          "needConsumptionRate": 0.004802
+          "needConsumptionRate": 0.004768
         },
         {
           "need": 2779,
@@ -23780,7 +23780,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 2780,
-          "needConsumptionRate": 0.00427
+          "needConsumptionRate": 0.004228
         },
         {
           "need": 2755,
@@ -23796,7 +23796,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 2749,
-          "needConsumptionRate": 0.006024
+          "needConsumptionRate": 0.006012
         },
         {
           "need": 2759,
@@ -23808,7 +23808,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 2774,
-          "needConsumptionRate": 0.0056444
+          "needConsumptionRate": 0.0054645
         },
         {
           "need": 2775,
@@ -23820,11 +23820,11 @@ if(window.params == null)window.params={
         },
         {
           "need": 2784,
-          "needConsumptionRate": 0.004505
+          "needConsumptionRate": 0.004474
         },
         {
           "need": 2785,
-          "needConsumptionRate": 0.007207
+          "needConsumptionRate": 0.006814
         },
         {
           "need": 2781,
@@ -23848,7 +23848,7 @@ if(window.params == null)window.params={
         "brazilian": "Residência de mercator",
         "english": "Mercator Residence",
         "french": "Résidence de Mercators",
-        "german": "Mercator",
+        "german": "Mercatoren-Wohnhaus",
         "italian": "Residenza dei mercator",
         "japanese": "​メルカトル​の​住居",
         "korean": "​상인 ​주거지",
@@ -23890,7 +23890,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6434,
-          "needConsumptionRate": 0.01102
+          "needConsumptionRate": 0.01034
         },
         {
           "need": 6435,
@@ -23906,7 +23906,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6443,
-          "needConsumptionRate": 0.006675
+          "needConsumptionRate": 0.006543
         },
         {
           "need": 6444,
@@ -23936,7 +23936,7 @@ if(window.params == null)window.params={
         "brazilian": "Residência de nobre",
         "english": "Noble Residence",
         "french": "Résidence de Nobles",
-        "german": "Edelmänner",
+        "german": "Edelmänner-Wohnhaus",
         "italian": "Residenza dei nobili",
         "japanese": "​ノビレス​の​住居",
         "korean": "​귀족 ​주거지",
@@ -23978,7 +23978,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6434,
-          "needConsumptionRate": 0.00932
+          "needConsumptionRate": 0.00883
         },
         {
           "need": 6435,
@@ -23994,7 +23994,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6443,
-          "needConsumptionRate": 0.00546
+          "needConsumptionRate": 0.00537
         },
         {
           "need": 6444,
@@ -24010,7 +24010,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6436,
-          "needConsumptionRate": 0.006712
+          "needConsumptionRate": 0.00669
         },
         {
           "need": 8423,
@@ -24038,11 +24038,11 @@ if(window.params == null)window.params={
         },
         {
           "need": 6445,
-          "needConsumptionRate": 0.004745
+          "needConsumptionRate": 0.00468
         },
         {
           "need": 6452,
-          "needConsumptionRate": 0.005343
+          "needConsumptionRate": 0.005303
         },
         {
           "need": 6722,
@@ -24066,7 +24066,7 @@ if(window.params == null)window.params={
         "brazilian": "Residência de pernalta",
         "english": "Wader Residence",
         "french": "Résidence de Tourbiers",
-        "german": "Wanderer",
+        "german": "Wanderer-Wohnhaus",
         "italian": "Residenza dei limicoli",
         "japanese": "​ウェーダー​の​住居",
         "korean": "​물지기 ​주거지",
@@ -24123,7 +24123,7 @@ if(window.params == null)window.params={
         "brazilian": "Residência de ferreiro",
         "english": "Smith Residence",
         "french": "Résidence de forgerons",
-        "german": "Schmied",
+        "german": "Schmiede-Wohnhaus",
         "italian": "Residenza dei fabbri",
         "japanese": "​スミス​の​住居",
         "korean": "​대장장이 ​주거지",
@@ -24169,7 +24169,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6431,
-          "needConsumptionRate": 0.0118
+          "needConsumptionRate": 0.01153
         },
         {
           "need": 6718,
@@ -24185,7 +24185,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6442,
-          "needConsumptionRate": 0.00922
+          "needConsumptionRate": 0.00909
         },
         {
           "need": 55946,
@@ -24211,7 +24211,7 @@ if(window.params == null)window.params={
         "brazilian": "Residência de edil",
         "english": "Alderman Residence",
         "french": "Résidences d'Aldermen",
-        "german": "Ältester",
+        "german": "Ältesten-Wohnhaus",
         "italian": "Residenza degli aldermanni",
         "japanese": "​アルダー​の​住居",
         "korean": "​장로 ​주거지",
@@ -24257,7 +24257,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6431,
-          "needConsumptionRate": 0.00987
+          "needConsumptionRate": 0.00968
         },
         {
           "need": 6718,
@@ -24273,7 +24273,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6442,
-          "needConsumptionRate": 0.00749
+          "needConsumptionRate": 0.007405
         },
         {
           "need": 55946,
@@ -24285,7 +24285,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6432,
-          "needConsumptionRate": 0.005243
+          "needConsumptionRate": 0.00519
         },
         {
           "need": 8423,
@@ -24309,7 +24309,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6440,
-          "needConsumptionRate": 0.005339
+          "needConsumptionRate": 0.00532
         },
         {
           "need": 6454,
@@ -24317,7 +24317,7 @@ if(window.params == null)window.params={
         },
         {
           "need": 6452,
-          "needConsumptionRate": 0.005343
+          "needConsumptionRate": 0.005303
         },
         {
           "need": 55950,
