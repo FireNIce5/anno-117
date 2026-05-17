@@ -2,7 +2,10 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 data-bind="text: $root.texts.patron.name">Patron</h4>
+                <h4>
+                    </span data-bind="text: $root.texts.patron.name">Patron</span>
+                    <external-link params="subpage: 'religion'"></external-link>
+                </h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <div class="modal-body" data-bind="with: $root.island()">
@@ -37,29 +40,41 @@
 
                 <!-- Patron Effects Table -->
                 <div data-bind="if: $data.selectedPatron()">
-                    <h5 data-bind="text: $root.texts.patronEffects.name">Patron Effects</h5>
+                    
                     <div data-bind="foreach: $data.selectedPatron().localEffects || []">
-                        <table class="table">
-                            <thead style="text-align: center">
-                                <tr>
-                                    <th data-bind="text: $root.texts.milestone.name">Milestone</th>
-                                    <th data-bind="text: $root.texts.devotionRequired.name">Devotion Required</th>
-                                    <th data-bind="text: $root.texts.scaling.name">Scaling</th>
-                                </tr>
-                            </thead>                            
-                            <tbody data-bind="foreach: $data.milestones">
+                        <div class="mt-4">
+                            <h5 data-bind="text: $data.title">Patron Effects</h5>
+                            <table class="table">
+                                <thead style="text-align: center">
+                                    <tr>
+                                        <th data-bind="text: $root.texts.milestone.name">Milestone</th>
+                                        <th data-bind="text: $root.texts.devotionRequired.name">Devotion Required</th>
+                                        <th data-bind="text: $root.texts.scaling.name">Scaling</th>
+                                    </tr>
+                                </thead>                            
+                                <tbody data-bind="foreach: $data.milestones" style="text-align: center">
 
-                                <tr data-bind="css: { 'table-success': $root.island().devotion() >= $data.devotion, 'text-muted': $root.island().devotion() < $data.devotion }">
-                                    <td data-bind="text: $index() + 1"></td>
-                                    <td data-bind="text: formatNumber($data.devotion)"></td>
-                                    <td data-bind="text: formatNumber($data.buffScaling,true) + ' %'"></td>                                    
-                                </tr>
+                                    <tr data-bind="css: { 'table-success': $root.island().devotion() >= $data.devotion, 'text-muted': $root.island().devotion() < $data.devotion }">
+                                        <td data-bind="text: $index() + 1" style="text-align: left;"></td>
+                                        <td data-bind="text: formatNumber($data.devotion)"></td>
+                                        <td>
+                                            <!-- ko if: $parent.isPopulationBuff -->
+                                            <span data-bind="text: '+' + formatNumber($data.buffScaling)"></span>
+                                            <img class="icon-sm icon-light" src="../icons/icon_resource_population.png" />
+                                            <!-- /ko -->
+                                            <!-- ko ifnot: $parent.isPopulationBuff -->
+                                            <span data-bind="text: formatNumber($data.buffScaling, true) + ' %'"></span>
+                                            <img class="icon-sm icon-light" src="../icons/icon_2d_productivity_0.webp" />
+                                            <!-- /ko -->
+                                        </td>                                    
+                                    </tr>
+                                    
+                                </tbody>
                                 
-                            </tbody>
-                            
-                        </table>
-                        <div class="inline-list-centered" data-bind="foreach: $data.effect.targets">
-                            <img class="mr-2 icon-sm" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name, title: $data.getRegionExtendedName()}">
+                            </table>
+                            <div class="inline-list-centered" data-bind="foreach: $data.effect.targets">
+                                <img class="mr-2 icon-sm" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name, title: $data.getRegionExtendedName()}">
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -21,7 +21,8 @@ test.describe('Population Needs Calculation Tests', () => {
 
   test('good consumption updates when checked state changes', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Get a need and toggle it
     const needToggleResult = await page.evaluate(() => {
@@ -61,7 +62,8 @@ test.describe('Population Needs Calculation Tests', () => {
 
   test('residence need calculations use params needConsumptionRate value', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Get all needs and verify they use params tpmin
     const needsVerification = await page.evaluate(() => {
@@ -107,7 +109,8 @@ test.describe('Population Needs Calculation Tests', () => {
 
   test('total residents calculation matches sum of all residences', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     const totalsData = await page.evaluate(() => {
       const island = (window as any).view.island() as Island;

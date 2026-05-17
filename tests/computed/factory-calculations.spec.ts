@@ -22,7 +22,8 @@ test.describe('Factory Calculation Tests', () => {
   test('factory inputAmount calculated correctly', async ({ page }) => {
     // Navigate and wait for initialization
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
     await page.waitForTimeout(1000);
 
     // Get first factory from the island
@@ -73,7 +74,8 @@ test.describe('Factory Calculation Tests', () => {
 
   test('factory boost reflects applied buffs', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Get initial boost value
     const initialBoost = await asserter.getValue<number>(
@@ -100,7 +102,8 @@ test.describe('Factory Calculation Tests', () => {
 
   test('multiple factories calculate independently', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Get multiple factories
     const factoriesData = await page.evaluate(() => {
@@ -146,7 +149,8 @@ test.describe('Factory Calculation Tests', () => {
 
   test('factory calculations use correct ACCURACY constant', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Get ACCURACY constant from params
     const accuracy = await asserter.getParamsValue<number>(page, 'ACCURACY');
@@ -183,7 +187,8 @@ test.describe('Factory Calculation Tests', () => {
 
   test('factory calculations with params-based expected values', async ({ page }) => {
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Set test values
     await page.evaluate(() => {

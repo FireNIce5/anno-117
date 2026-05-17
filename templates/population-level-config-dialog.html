@@ -102,6 +102,42 @@
                     </collapsible>
                 </div>
 
+                <!-- Population Buffs from Area Effects & Specialists -->
+                <!-- ko if: $data.populationBuffsVisible() -->
+                <div class="mt-3">
+                    <collapsible params="id: $data.populationBuffsId, heading: $root.texts.fromAreaEffectsAndSpecialists.name, data: $data, collapsed: true">
+                        <table class="table table-fixed">
+                            <tbody data-bind="foreach: $data.populationBuffs().filter(b => b.visible())">
+                                <tr>
+                                    <td>
+                                        <!-- ko if: !$data.isPatronEffect -->
+                                        <span class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" data-bind="checked: $data.checked, attr: {id: 'pop-buff-' + $data.appliedBuff.parent.guid}">
+                                            <label class="custom-control-label" data-bind="attr: {for: 'pop-buff-' + $data.appliedBuff.parent.guid}">
+                                                <span data-bind="component: {name: 'asset-icon', params: $data.appliedBuff.parent}"></span>
+                                                <span data-bind="text: $data.appliedBuff.parent.name()"></span>
+                                            </label>
+                                        </span>
+                                        <!-- /ko -->
+                                        <!-- ko if: $data.isPatronEffect -->
+                                        <span style="padding-left: 24px;">
+                                            <span data-bind="component: {name: 'asset-icon', params: $data.appliedBuff.parent}"></span>
+                                            <span data-bind="text: $data.appliedBuff.parent.name()"></span>
+                                        </span>
+                                        <!-- /ko -->                                    </td>
+                                    <td>
+                                        <span class="inline-list-centered">
+                                            <img class="icon-sm icon-light mr-1" src="../icons/icon_resource_population.png" />
+                                            <span data-bind="text: formatNumber($data.totalPopulation())"></span>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </collapsible>
+                </div>
+                <!-- /ko -->
+
                 <div class="mt-4" data-bind="component: { name: 'notes-section', params:{ $data: $data.instance()}}"></div>
             </div>
             <div class="modal-footer">

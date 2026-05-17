@@ -34,6 +34,7 @@
                 </td>
             </tr>
             <!-- /ko -->
+            <!-- ko if: isProductivityVisible() -->
             <tr>
                 <!-- productivity -->
                 <td>
@@ -61,6 +62,30 @@
                     </div>
                 </td>
             </tr>
+            <!-- /ko -->
+            <!-- ko if: $data.instance().neededFertility -->
+            <tr>
+                <!-- required fertility -->
+                <td>
+                    <span data-bind="text: $root.texts.fertility.name"></span>
+                </td>
+                <td>
+                    <img class="icon-sm mr-1" data-bind="attr: { src: $data.instance().neededFertility.icon ? $data.instance().neededFertility.icon : null, alt: $data.instance().neededFertility.name }">
+                    <span class="mr-4" data-bind="text: $data.instance().neededFertility.name"></span>
+                </td>
+                <td>
+                    <div class="inline-list-centered">                       
+
+                        <!-- ko with: $data.showFertilityCheckbox() -->
+                        <div class="inline-list-centered">
+                            <input type="checkbox" data-bind="checked: $data.checked, attr: { id: 'fert-config-' + $data.fertility.guid }">
+                            <label class="ml-1 mb-0" data-bind="text: $root.texts.availableOnIsland.name, attr: { for: 'fert-config-' + $data.fertility.guid }"></label>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                </td>
+            </tr>
+            <!-- /ko -->
             <tr data-bind="debug: 'Workforce Demand', with: $data.instance().workforceDemand">
                 <!-- workforce -->
                 <td>
@@ -134,6 +159,11 @@
                                 <!-- workforce replacement -->
                                 <div data-bind="if: $data.replacingWorkforce && $parent.workforceDemand.defaultWorkforce.guid !== $data.replacingWorkforce">
                                     <replacement params="{old: $parent.workforceDemand.defaultWorkforce, new: $data.replacingWorkforce}"></replacement>
+                                </div>
+                                <!-- fertility buff -->
+                                <div data-bind="if: $data.buff.addedFertility" class="inline-list-centered">
+                                    <span data-bind="text: formatNumber($data.buff.fertilityPercent, true) + ' %'"></span>
+                                    <img class="icon-sm ml-1" data-bind="attr: { src: $data.buff.addedFertility.icon ? $data.buff.addedFertility.icon : null, alt: $data.buff.addedFertility.name, title: $data.buff.addedFertility.name }">
                                 </div>
                             </div>
                         </td>

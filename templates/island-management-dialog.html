@@ -92,7 +92,6 @@
                             <td>
                                 <span class="ui-tier-unit-icon" data-bind="with: $data.selectedPatron()">
                                     <img class="icon-sm" src="../icons/icon_marketplace_2d_light.png" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name, title: $data.name }">
-
                                 </span>
                             </td>
                             <td>
@@ -131,6 +130,11 @@
                             </td>
                             <td>
                                 <div class="float-right" data-bind="if: !$data.isAllIslands()">
+                                    <button class="btn btn-secondary btn-sm"
+                                        data-bind="click: () => $data.fertilitiesExpanded(!$data.fertilitiesExpanded()),
+                                                   css: { active: $data.fertilitiesExpanded() }">
+                                        <img class="icon-sm" src="../icons/icon_2d_fertility_0.webp"></img>
+                                    </button>
                                     <button class="btn btn-secondary btn-sm" data-bind="click: () => $root.islandManager.startRename($data)">
                                         <span class="fa fa-pencil"> </span>
                                     </button>
@@ -140,6 +144,26 @@
                                 </div>
                             </td>
                         </tr>
+                        <!-- ko if: !$data.isAllIslands() && $data.fertilitiesExpanded() -->
+                        <tr>
+                            <td colspan="6">
+                                <div class="p-2" style="background-color: rgba(0,0,0,0.05); border-radius: 4px;">
+                                    <strong data-bind="text: $root.texts.islandFertilities.name"></strong>
+                                    <div class="inline-list flex-wrap mt-1">
+                                        <!-- ko foreach: $data.visibleIslandFertilities -->
+                                        <div class="mr-3 mb-1 inline-list-centered">
+                                            <div data-bind="component: { name: 'icon-checkbox', params: {
+                                                asset: $data.fertility,
+                                                checked: $data.checked,
+                                                id: 'fert-' + $parent.session.guid + '-' + $data.fertility.guid
+                                            }}"></div>
+                                        </div>
+                                        <!-- /ko -->
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- /ko -->
                     </tbody>
                 </table>
 

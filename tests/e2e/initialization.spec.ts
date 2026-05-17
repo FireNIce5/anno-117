@@ -25,7 +25,7 @@ test.describe('Application Initialization E2E Tests', () => {
     await page.goto('/');
 
     // Wait for initialization to complete
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
     await page.waitForTimeout(2000);
 
     // Verify no errors occurred
@@ -43,7 +43,8 @@ test.describe('Application Initialization E2E Tests', () => {
     await configLoader.loadConfig(page, 'tests/fixtures/with-data.json');
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Verify critical initialization order
     const initOrder = await page.evaluate(() => {
@@ -105,7 +106,8 @@ test.describe('Application Initialization E2E Tests', () => {
     await configLoader.loadConfig(page, 'tests/fixtures/basic.json');
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Verify params object exists and has expected structure
     const paramsValid = await page.evaluate(() => {
@@ -142,7 +144,8 @@ test.describe('Application Initialization E2E Tests', () => {
     await configLoader.loadConfig(page, 'tests/fixtures/basic.json');
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Check window.view structure
     const viewState = await page.evaluate(() => {
@@ -171,7 +174,8 @@ test.describe('Application Initialization E2E Tests', () => {
   test('localStorage persistence works', async ({ page }) => {
     // Navigate to page first (without init script that would run on every reload)
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Set localStorage AFTER page load using evaluate (not init script)
     // This way it won't be overwritten on reload
@@ -179,13 +183,18 @@ test.describe('Application Initialization E2E Tests', () => {
     await page.evaluate((configData) => {
       localStorage.clear();
       for (const [key, value] of Object.entries(configData)) {
-        localStorage.setItem(key, String(value));
+        if (typeof value === 'object' && value !== null) {
+          localStorage.setItem(key, JSON.stringify(value));
+        } else {
+          localStorage.setItem(key, String(value));
+        }
       }
     }, config);
 
     // Reload to apply the config
-    await page.reload();
-    await page.waitForLoadState('networkidle');
+    await page.goto('/');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.islands && (window as any).view.islands().length > 0);
+    await page.waitForFunction(() => (window as any).view.island());
     await page.waitForTimeout(1000);
 
     // Set a factory building count
@@ -200,14 +209,11 @@ test.describe('Application Initialization E2E Tests', () => {
 
     // Wait for persistence (debounced save is 0ms but still async)
     await page.waitForTimeout(1000);
-    await page.evaluate(() => {
-      console.log(localStorage.getItem("All Islands"));
-    });
 
-
-    // Reload page - localStorage should persist now (no init script overwriting it)
-    await page.reload();
-    await page.waitForLoadState('networkidle');
+    // Navigate away and back - localStorage should persist now
+    await page.goto('/');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.islands && (window as any).view.islands().length > 0);
+    await page.waitForFunction(() => (window as any).view.island());
     await page.waitForTimeout(1000);
 
     await page.evaluate(() => {
@@ -227,7 +233,8 @@ test.describe('Application Initialization E2E Tests', () => {
     await configLoader.loadConfig(page, 'tests/fixtures/basic.json');
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
     await page.waitForTimeout(1000);
 
     // Check navbar rendered
@@ -249,7 +256,8 @@ test.describe('Application Initialization E2E Tests', () => {
     await configLoader.setDebugMode(page, true);
 
     await page.goto('/');
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Check debug utilities are available
     const debugAvailable = await page.evaluate(() => {

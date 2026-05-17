@@ -33,7 +33,8 @@ test.describe('Factory Config Dialog Binding Validation', () => {
     await page.goto('/');
 
     // Wait for application to fully initialize (same pattern as template-bindings.spec.ts)
-    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() => (window as any).view && (window as any).view.island());
+    await page.waitForTimeout(300);
 
     // Wait for product tiles to appear (product tiles replaced factory tiles)
     await page.waitForSelector('.product-tile, .ui-service-building-item', {
