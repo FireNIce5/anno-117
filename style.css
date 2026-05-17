@@ -275,6 +275,11 @@ nav {
     height: calc(180px - 2rem);
 }
 
+.grouping-box {
+    background-color: rgba(0,0,0,0.05); 
+    border-radius: 4px;
+}
+
 .bottom-button {
     margin-left: -10px;
     margin-right: -10px;
