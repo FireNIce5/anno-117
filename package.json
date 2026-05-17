@@ -1,7 +1,7 @@
 {
   "name": "anno-117-calculator",
   "displayName": "Anno 117 Calculator",
-  "version": "1.8",
+  "version": "2.0",
   "description": "A calculator to compute the consumption of goods in the computer game Anno 117.",
   "scripts": {
     "test": "playwright test",
@@ -48,6 +48,7 @@
     "@types/knockout": "^3.4.72",
     "@types/node": "^20.10.5",
     "http-server": "^14.1.1",
+    "javascript-lp-solver": "^1.0.3",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
     "webpack-dev-server": "^4.15.1"
