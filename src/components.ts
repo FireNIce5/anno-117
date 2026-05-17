@@ -274,7 +274,7 @@ ko.components.register('factory-header', {
 
         <div class="ui-fchain-item-icon mb-2">
             <img class="icon-tile" data-bind="attr: { src: $data.icon ? $data.icon : null, alt: $data.name }">
-            <img class="superscript-icon icon-light" data-bind="visible: $data.island.region.id == 'Meta', attr: {src: $data.associatedRegions[0] ? $data.associatedRegions[0].icon : null, title: $data.associatedRegions[0] ? $data.associatedRegions[0].name : null}">
+            <img class="superscript-icon icon-light" data-bind="visible: $data.island.region.id == 'Meta', attr: {src: $data.availableRegions()[0] ? $data.availableRegions()[0].icon : null, title: $data.availableRegions()[0] ? $data.availableRegions()[0].name : null}">
         </div>`
 });
 
@@ -732,6 +732,11 @@ ko.components.register('buff-display', {
             <!-- workforce replacement -->
             <div data-bind="debug: 'replace workforce', if: $data.replaceWorkforce">
                 <replacement params="{old: $data.replaceWorkforce.oldWorkforce, new: $data.replaceWorkforce.newWorkforce}"></replacement>
+            </div>
+            <!-- fertility buff -->
+            <div data-bind="if: $data.addedFertility" class="inline-list-centered">
+                <span data-bind="text: formatNumber($data.fertilityPercent, true) + ' %'"></span>
+                <img class="icon-sm ml-1" data-bind="attr: { src: $data.addedFertility && $data.addedFertility.icon ? $data.addedFertility.icon : null, alt: $data.addedFertility && $data.addedFertility.name, title: $data.addedFertility && $data.addedFertility.name }">
             </div>
         </div>`
 });

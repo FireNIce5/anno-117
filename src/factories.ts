@@ -1,6 +1,6 @@
 import { NamedElement, ACCURACY, EPSILON, ko, BuildingsCalc } from './util';
 import { Workforce, WorkforceDemand } from './population';
-import { Demand, Product, AqueductBuff, Item, Buff, ExtraGoodProduction } from './production';
+import { Demand, Product, AqueductBuff, Item, Buff, ExtraGoodProduction, Fertility } from './production';
 import { AppliedBuff } from './buffs';
 import {
     ConsumerConfig,
@@ -68,6 +68,7 @@ export class Consumer extends NamedElement{
     // === UI/DISPLAY ===
     public availableItems!: KnockoutComputed<AppliedBuff[]>;     // Items available for this consumer
     public product!: Product | null;                             // Primary product (for factories)
+    public availableRegions: KnockoutComputed<Region[]>;         // Regions where this consumer is available
 
 
     /**
@@ -99,6 +100,10 @@ export class Consumer extends NamedElement{
         this.associatedRegions = [];
         for (var r of config.associatedRegions)
             this.associatedRegions.push(literalsMap.get(r) as Region);
+
+        this.availableRegions = ko.pureComputed(() => {
+            return this.associatedRegions.filter(r => r.available() || r.id === 'Meta');
+        });
  
         this.items = [];
         this.buffs = ko.observableArray([]);
@@ -131,7 +136,6 @@ export class Consumer extends NamedElement{
         this.buildingsSubscription = ko.computed(() => {        
             this.buildings.required(this.throughput() / 60 * this.cycleTime / this.boost());
         }).extend({ deferred: true });
-        this.lockDLCIfSet(this.buildings);
 
         this.defaultInputs = new Map();
         if (config.inputs) {
@@ -198,7 +202,9 @@ export class Consumer extends NamedElement{
             const multiplier = 100 + productivityUpgradeSum;
             const totalBoost = (baseValue * multiplier) / 10000; // do division in the end to avoid rounding issues
 
-            this.boost(Math.max(ACCURACY, totalBoost));
+            const fertilityFactor = (this as any).fertilityFactor ? (this as any).fertilityFactor() : 1.0;
+
+            this.boost(Math.max(ACCURACY, totalBoost * fertilityFactor));
         });
 
         this.inputDemandsSubscription = ko.computed(() => {
@@ -492,6 +498,7 @@ export class Factory extends Consumer implements Supplier {
 
     // === FACTORY IDENTIFICATION ===
     public isFactory: boolean;                              // Always true for Factory instances
+    public neededFertility?: Fertility;                     // Fertility/deposit required to operate
 
     // === PRODUCTION OUTPUTS ===
     public outputs: Product[];                              // Products this factory produces
@@ -512,6 +519,7 @@ export class Factory extends Consumer implements Supplier {
     public substitutableOutputAmount: KnockoutComputed<number>; // Output that can be substituted
     public overProduction: KnockoutComputed<number>;         // Excess production over demand
     public isHighlightedAsMissing: KnockoutComputed<boolean>;
+    public fertilityFactor: KnockoutComputed<number>;
 
     /**
      * Creates a new Factory instance
@@ -525,6 +533,32 @@ export class Factory extends Consumer implements Supplier {
         
         // Explicit assignments
         this.isFactory = true;
+
+        if (config.neededFertility) {
+            const fertility = assetsMap.get(config.neededFertility);
+            if (fertility instanceof Fertility) {
+                this.neededFertility = fertility;
+            }
+        }
+
+        this.fertilityFactor = ko.computed(() => {
+            if (!this.neededFertility || this.island.isAllIslands()) return 1.0;
+
+            const islandFertility = this.island.getIslandFertility(this.neededFertility.guid);
+            
+            // Island-level fertility (from checked state + global area buffs)
+            let totalFertilityPercent = islandFertility ? islandFertility.factor() * 100 : 0;
+
+            // Factory-specific building buffs that add this fertility
+            for (const appliedBuff of this.buffs()) {
+                if (appliedBuff.buff.addedFertility?.guid === this.neededFertility.guid) {
+                    totalFertilityPercent += appliedBuff.fertilityPercent();
+                }
+            }
+
+            return Math.min(1.0, totalFertilityPercent / 100);
+        });
+
         this.outputs = []
         for (let entry of config.outputs) {
             const product = assetsMap.get(entry.product);
@@ -688,25 +722,34 @@ export class Factory extends Consumer implements Supplier {
 
     // === SUPPLIER INTERFACE IMPLEMENTATION ===
 
-    /**
-     * Returns the the production amount (Supplier interface) if this factory would NOT be the default supplier
-     * Includes extra goods factor for accurate production calculation
-     */
-    defaultProduction(): number {
-        return Math.max(this.throughputByExistingBuildings(), this.throughputByExtraGoodSupplier()) * this.extraGoodFactor();
-    }
-
     currentProduction(): number {
         return this.outputAmount();
     }
 
     /**
      * Checks if this factory can supply the requested amount (Supplier interface)
-     * @param amount - The requested amount
-     * @returns True if factory is available and in correct region
+     * @returns True if factory is available and has required fertility
      */
     canSupply(): boolean {
-        return this.available();
+        if (!this.available()) return false;
+        if (this.neededFertility && !this.island.isAllIslands()) {
+            const islandFertility = this.island.getIslandFertility(this.neededFertility.guid);
+            
+            let totalFertilityPercent = islandFertility ? islandFertility.factor() * 100 : 0;
+            if (islandFertility && islandFertility.checked()) {
+                totalFertilityPercent = 100;
+            }
+
+            // Add factory-specific buffs that provide this fertility
+            for (const appliedBuff of this.buffs()) {
+                if (appliedBuff.buff.addedFertility?.guid === this.neededFertility.guid) {
+                    totalFertilityPercent += appliedBuff.fertilityPercent();
+                }
+            }
+
+            if (totalFertilityPercent <= EPSILON) return false;
+        }
+        return true;
     }
 
     isDefaultSupplier(): boolean {

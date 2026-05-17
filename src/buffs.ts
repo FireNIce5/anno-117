@@ -22,6 +22,8 @@ export class AppliedBuff {
     public productivityUpgrade: KnockoutObservable<number>;
     public fuelDurationPercent: KnockoutObservable<number>;
     public workforceMaintenanceFactorUpgrade: KnockoutObservable<number>;
+    public fertilityPercent: KnockoutObservable<number>;
+    public populationBonus: KnockoutComputed<number>;
     public extraGoods?: ExtraGoodProduction[];
     public available: KnockoutComputed<boolean>;
     public visible: KnockoutComputed<boolean>;
@@ -97,6 +99,14 @@ export class AppliedBuff {
         
         this.workforceMaintenanceFactorUpgrade = ko.pureComputed(() => {
             return this.scaling() * this.buff.workforceMaintenanceFactorUpgrade;
+        });
+
+        this.fertilityPercent = ko.pureComputed(() => {
+            return this.scaling() * this.buff.fertilityPercent;
+        });
+
+        this.populationBonus = ko.pureComputed(() => {
+            return this.scaling() * this.buff.population;
         });
 
         this.replacements = new Map();
@@ -205,8 +215,11 @@ export class ExtraGoodProduction {
                 // after initialization, we have this.amountHistory = [val, 0]
                 // when the user manually sets it to 0, the wrong value is propagated
                 // restrict to cycles triggered by automatic updates, i.e. update interval < 200 ms
-                if (Math.abs(this.amountHistory[1][0] - val) < ACCURACY && this.amountHistory[1][0] !== 0 && time.getTime() - this.amountHistory[1][1].getTime() < 200)
-                    return (val + this.amountHistory[0][0]) / 2;
+                if (Math.abs(this.amountHistory[1][0] - val) < ACCURACY && this.amountHistory[1][0] !== 0 && time.getTime() - this.amountHistory[1][1].getTime() < 200){
+                    const newVal = (val + this.amountHistory[0][0]) / 2;
+                    console.log("[DEBUG] Break extra good calculation cycle for", this.product.name(), " before:", val, ", corrected:", newVal);
+                    return newVal;
+                }
             }
 
             this.amountHistory.unshift([val, time]);

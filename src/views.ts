@@ -1,10 +1,12 @@
 import { ACCURACY, BuildingsCalc, formatNumber, ko, NamedElement } from './util';
 import { PopulationGroup, PopulationLevel, ResidenceBuilding, Workforce } from './population';
 import { ResidenceEffectCoverage, ResidenceEffect, ResidenceNeed, NeedCategory, Need, PopulationLevelNeed } from './consumption';
-import { ProductCategory, Product, Demand } from './production';
+import { ProductCategory, Product, Demand, Effect } from './production';
+import { AppliedBuff } from './buffs';
 import { Consumer, Factory, Module } from './factories';
 import { TradeRoute } from './trade';
 import { ExtraGoodSupplier, PassiveTradeSupplier } from './suppliers';
+import { Session } from './world';
 
 
 declare const $: any;
@@ -103,19 +105,15 @@ export class ViewMode {
     plan(): void {
         view.settings.decimalsForBuildings.checked(true);
 
-        for (const effect of window.view.globalEffects) {
-            effect.scaling(1);
-        }
-
+        // activate DLCs first so that all effects are available
         for (var dlc of view.dlcs.values()) {
             dlc.checked(true);
         }
 
-        for (var dlcIndex of [0, 2, 8, 11]) {
-            var d = view.dlcsMap.get("dlc" + dlcIndex);
-            if (d)
-                d.checked(false);
+        for (const effect of window.view.globalEffects) {
+            effect.scaling(1);
         }
+
     }
 
     /**
@@ -128,12 +126,23 @@ export class ViewMode {
 
         //view.settings.hideProductionBoost.checked(false);
 
+        for (var dlc of view.dlcs.values()) {
+            dlc.checked(true);
+        }
+
         for (const effect of window.view.globalEffects) {
             effect.scaling(1);
         }
 
-        for (var dlc of view.dlcs.values()) {
-            dlc.checked(true);
+        //Vulcano effects
+        for (const session of (window.view.sessions as Session[])){
+            if (session.region.id != "Roman" && session.region.id != "Meta" )
+                continue;
+
+            for (const e of session.effects){
+                if (e.guid == 145099 || e.guid == 145095 || e.guid == 148043)
+                    e.scaling(5) // fertile soil and obsidian gathering / mining
+            }
         }
     }
 }
@@ -681,7 +690,7 @@ class PopulationLevelNeedPresenter {
         this.residentsPerResidence = need.residents;
         this.instance = ko.observable();
         this.name = ko.pureComputed(() => need.product.name());
-        this.visible =  ko.pureComputed(() => !!this.instance());
+        this.visible =  ko.pureComputed(() => this.instance()?.available() ?? false);
         this.product = ko.pureComputed(() => need.product);
         this.amount = ko.pureComputed(() => {
             let inst = this.instance();
@@ -691,11 +700,9 @@ class PopulationLevelNeedPresenter {
             return inst.amount();
         });
         this.checked = ko.pureComputed({
-            read: () => this.instance()?.checked(),
+            read: () => this.instance()?.checked() ?? false,
             write: (checked: boolean) => {
-                if(this.instance())
-                    this.instance()?.checked(checked);
-
+                this.instance()?.checked(checked);
             }
         });
         this.isInactive =  ko.pureComputed(() => false);
@@ -755,16 +762,52 @@ class NeedCategoryPresenter {
     }
 }
 
+/**
+ * Represents an effect that applies to a range of buildings (e.g. population buffs)
+ * Handles checked, visible and available state for the UI
+ */
+export class RangeEffect {
+    public appliedBuff: AppliedBuff;
+    public isPatronEffect: boolean;
+    public checked: KnockoutComputed<boolean>;
+    public available: KnockoutComputed<boolean>;
+    public visible: KnockoutComputed<boolean>;
+    public totalPopulation: KnockoutComputed<number>;
+
+    constructor(appliedBuff: AppliedBuff, isPatronEffect: boolean, buildings: KnockoutComputed<BuildingsCalc | null>) {
+        this.appliedBuff = appliedBuff;
+        this.isPatronEffect = isPatronEffect;
+
+        const effect = this.appliedBuff.parent as Effect;
+        this.checked = ko.pureComputed({
+            read: () => effect.scaling() > 0,
+            write: (val: boolean) => effect.scaling(val ? 1 : 0)
+        });
+
+        this.available = appliedBuff.available;
+        this.visible = appliedBuff.visible;
+
+        this.totalPopulation = ko.pureComputed(() => {
+            const b = buildings();
+            if (!b) return 0;
+            return b.constructed() * this.appliedBuff.populationBonus();
+        });
+    }
+}
+
 export class ResidencePresenter{
     public instance: KnockoutObservable<PopulationLevel>;
     public residence: KnockoutObservable<ResidenceBuilding>;
-    public buildings: KnockoutObservable<BuildingsCalc>;
+    public buildings: KnockoutComputed<BuildingsCalc | null>;
     public name: KnockoutObservable<string>;
     public residents: KnockoutObservable<string>;
     private populationLevelNeeds: PopulationLevelNeedPresenter[];
     public needCategories: NeedCategoryPresenter[];
     public visibleNeedCategories: KnockoutObservableArray<NeedCategoryPresenter>;
     public effectCoverage: KnockoutObservableArray<ResidenceEffectCoverage>;
+    public populationBuffs: KnockoutComputed<RangeEffect[]>;
+    public populationBuffsId: string;
+    public populationBuffsVisible: KnockoutComputed<boolean>;
 
 
     constructor(needCategories: NeedCategory[], populationLevel: PopulationLevel){
@@ -777,6 +820,28 @@ export class ResidencePresenter{
         this.populationLevelNeeds = [];
         this.needCategories = [];
         this.effectCoverage = ko.pureComputed(() => this.residence() ? this.residence().effectCoverage() : []);
+
+        this.populationBuffsId = "population-buffs-" + populationLevel.guid;
+
+        this.populationBuffs = ko.pureComputed(() => {
+            const residence = this.residence();
+            if (!residence) return [];
+            const patronEffects = residence.island.patronEffects;
+            const seen = new Set<Effect>();
+            const result: RangeEffect[] = [];
+            for (const b of residence.buffs()) {
+                if (b.buff.population === 0) continue;
+                if (!(b.parent instanceof Effect)) continue;
+                const effect = b.parent;
+                if (seen.has(effect)) continue;
+                seen.add(effect);
+                const isPatronEffect = patronEffects.indexOf(effect) !== -1;
+                result.push(new RangeEffect(b, isPatronEffect, this.buildings));
+            }
+            return result;
+        });
+
+        this.populationBuffsVisible = ko.pureComputed(() => this.populationBuffs().some(b => b.visible()));
 
         for (let category of needCategories){
             let presCat = new NeedCategoryPresenter(this, category);

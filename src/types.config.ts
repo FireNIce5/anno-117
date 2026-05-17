@@ -24,6 +24,15 @@ export interface ConstantsConfig {
   fuelProduct: number;
 }
 
+// DLC configuration interface
+export interface DLCConfig {
+  guid: number;
+  name: string;
+  iconPath: string;
+  locaText: LocaTextConfig;
+  id: string;
+}
+
 // Language configuration interface
 export interface LanguageConfig {
   // This interface represents individual items in the languages array
@@ -48,13 +57,22 @@ export interface RegionConfig {
   id: string;
 }
 
+// Fertility configuration interface
+export interface FertilityConfig {
+  guid: number;
+  name: string;
+  iconPath: string;
+  locaText: LocaTextConfig;
+  regions: string[];
+}
+
 // Session configuration interface
 export interface SessionConfig {
   guid: number;
   name: string;
   iconPath: string;
-  locaText: LocaTextConfig;
   region: number;
+  locaText?: LocaTextConfig;
 }
 
 // NeedAttribute configuration interface
@@ -94,6 +112,7 @@ export interface NeedConfig {
     [key: string]: number; // Allow string indexing
   };
   locaText?: LocaTextConfig;
+  dlcUnlocks?: number[];
 }
 
 // PopulationGroup configuration interface
@@ -140,6 +159,7 @@ export interface ProductConfig {
   isAbstract: boolean;
   isConstructionMaterial: boolean;
   associatedRegions?: string[];
+  dlcUnlocks?: number[];
 }
 
 // Workforce configuration interface
@@ -176,12 +196,14 @@ export interface FactoryConfig {
     amount: number;
   }[];
   cycleTime: number;
+  neededFertility: number;
   modulesLimit: number;
   inputs?: {
     product: number;
     amount: number;
   }[];
   buffs?: number[];
+  dlcUnlocks?: number[];
   aqueductProductivityBuff?: number;
   additionalModule?: number;
 }
@@ -199,6 +221,7 @@ export interface ModuleConfig {
   }[];
   needsFuelInput: boolean;
   cycleTime: number;
+  neededFertility: number;
   modulesLimit: number;
   buffs: number[];
 }
@@ -214,11 +237,14 @@ export interface BuildingBuffConfig {
   workforceModifierInPercent: number;
   productivityUpgrade: number;
   fuelDurationPercent: number;
+  addedFertility: number;
+  fertilityPercent: number;
   replaceWorkforce: {
     newWorkforce: number;
     oldWorkforce: number;
   };
   workforceMaintenanceFactorUpgrade: number;
+  population: number;
   additionalOutputs?: {
     product: number;
     forceProductSameAsFactoryOutput: boolean;
@@ -226,10 +252,21 @@ export interface BuildingBuffConfig {
     amount: number;
   }[];
   additionalWorkforces?: number[];
+  dlcUnlocks?: number[];
   replaceInputs?: {
     newInput: number;
     oldInput: number;
   }[];
+}
+
+// AreaBuff configuration interface
+export interface AreaBuffConfig {
+  guid: number;
+  name: string;
+  iconPath: string;
+  locaText: LocaTextConfig;
+  addedFertility: number;
+  fertilityPercent: number;
 }
 
 // Effect configuration interface
@@ -239,12 +276,13 @@ export interface EffectConfig {
   iconPath: string;
   locaText: LocaTextConfig;
   buffs: number[];
-  targets: number[];
+  targets?: number[];
   targetsIsAllProduction: boolean;
   effectScope: string;
   excludeEffectSourceGUID: boolean;
   effectDuration: number;
   source: string;
+  dlcUnlocks?: number[];
 }
 
 // Tech configuration interface
@@ -266,8 +304,10 @@ export interface PatronsConfig {
   localEffects?: {
     effect: number;
     milestones: any[];
+    title: Record<string, any>;
   }[];
   wonder?: number;
+  dlcUnlocks?: number[];
 }
 
 // Item configuration interface
@@ -281,6 +321,7 @@ export interface ItemConfig {
   effectScope: string;
   excludeEffectSourceGUID: boolean;
   rarity: string;
+  dlcUnlocks?: number[];
 }
 
 // Icon configuration interface
@@ -299,9 +340,11 @@ export interface TextConfig {
 // Root configuration interface combining all parameter types
 export interface ParamsConfig {
   constants: ConstantsConfig;
+  dlcs: DLCConfig[];
   languages: string[];
   needConsumptions: NeedConsumptionConfig[];
   regions: RegionConfig[];
+  fertilities: FertilityConfig[];
   sessions: SessionConfig[];
   needAttributes: NeedAttributeConfig[];
   needCategories: NeedCategoryConfig[];
@@ -315,6 +358,7 @@ export interface ParamsConfig {
   factories: FactoryConfig[];
   modules: ModuleConfig[];
   buildingBuffs: BuildingBuffConfig[];
+  areaBuffs: AreaBuffConfig[];
   effects: EffectConfig[];
   techs: TechConfig[];
   patrons: PatronsConfig[];

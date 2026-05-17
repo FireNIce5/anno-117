@@ -1,5 +1,5 @@
 import { ACCURACY, BuildingsCalc, createFloatInput, EPSILON, formatNumber, ko } from './util';
-import { AppliedBuff, Product, ProductCategory } from './production';
+import { AppliedBuff, IslandFertility, Product, ProductCategory } from './production';
 import { Factory, Module } from './factories';
 import { Island, Region } from './world';
 import { ExtraGoodSupplier, Supplier } from './suppliers';
@@ -68,6 +68,7 @@ export class FactoryPresenter {
         this.name = ko.pureComputed(() => this.instance()?.name());
         this.region = ko.pureComputed(() => this.instance()?.associatedRegions[0]);
         this.buildings = ko.pureComputed(() => this.instance()?.buildings || 0);
+
         this.boost = ko.pureComputed(() => this.instance()?.boost() || 1);
         this.outputAmount = ko.pureComputed(() => this.instance()?.outputAmount() || 0);
         this.modules = ko.pureComputed(() => this.instance()?.modules || []);
@@ -127,6 +128,19 @@ export class FactoryPresenter {
     isCapacityUtilizationVisible(): boolean {
         return this.buildings().constructed() >= 1 && !this.parentProduct.product.isConstructionMaterial
     }
+
+    isProductivityVisible(): boolean {
+        const factory = this.instance();
+        if (!factory) return true;
+        if (!factory.neededFertility) return true;
+        return factory.fertilityFactor() > EPSILON;
+    }
+
+    showFertilityCheckbox(): IslandFertility | undefined {
+        const factory = this.instance();
+        if (!factory?.neededFertility) return undefined;
+        return this.island().getVisibleIslandFertility(factory.neededFertility.guid);
+    }
 }
 
 /**
@@ -150,12 +164,13 @@ export class ProductPresenter {
     public availableExtraGoodSuppliers: KnockoutComputed<ExtraGoodSupplier[]>;
     public defaultSupplier: KnockoutComputed<Supplier | null>;
     public selectedSupplierOption: KnockoutObservable<SupplierOption | null>;
+    
 
     // === ISLAND SELECTION FOR TRADE ROUTES ===
     public availableTradeIslands: KnockoutComputed<Island[]>;
     public selectedTradeIsland: KnockoutObservable<Island | null>;
     public tradeRouteAmount: KnockoutObservable<number>;
-    public excessProductionSubscription: KnockoutComputed<void>;
+    private excessProduction: KnockoutComputed<number>;
 
     // === AGGREGATE CALCULATIONS ===
     public extraGoodProduction: KnockoutComputed<number>;
@@ -283,13 +298,17 @@ export class ProductPresenter {
         // Selected supplier option (for binding to dropdown)
         this.selectedSupplierOption = ko.observable(null);
 
+        this.excessProduction = ko.pureComputed(() => this.instance().excessProduction());
+
         // Island selection for trade route creation
         this.selectedTradeIsland = ko.observable(null);
         this.tradeRouteAmount = createFloatInput(0, 0);
 
-        this.excessProductionSubscription = ko.pureComputed(() => { // pure Computed to avoid re-calculation when tradeRouteAmount is set
-            this.tradeRouteAmount(this.instance().excessProduction());
-        });
+        // We cannout use a computed here to get excess production and update tradeRouteAmount in one line
+        // because this would override user edits in the UI: after the user entered a value,
+        // the computed would be re-evaluated resulting in tradeRouteAmount being reset to excess amount
+        this.excessProduction.subscribe((amount: number) => this.tradeRouteAmount(amount));
+        this.tradeRouteAmount(this.excessProduction());
 
         this.availableTradeIslands = ko.pureComputed(() => {
             if (!this.instance().tradeList) return [];
@@ -346,9 +365,13 @@ export class ProductPresenter {
 
         // Determine region from factories
         this.region = ko.pureComputed(() => {
-            const factories = this.visibleFactories();
-            if (factories.length > 0) {
-                return factories[0].region();
+            const regions = new Set(
+                this.factoryPresenters
+                    .map(f => f.factory.associatedRegions[0])
+                    .filter(r => r != null && r.available())
+            );
+            if (regions.size == 1) {
+                return [...regions][0];
             }
             return undefined;
         });
@@ -401,7 +424,7 @@ export class ProductPresenter {
 
         this.consumerViewVisible = ko.pureComputed(() => this.instance().totalDemand() > ACCURACY);
 
-        this.regionIconVisible = ko.pureComputed(() => this.island().region.id == "Meta");
+        this.regionIconVisible = ko.pureComputed(() => this.region() != null && this.island().region != this.region());
 
         this.tradeListVisible = ko.pureComputed(() => this.tradeList()?.visible());
 

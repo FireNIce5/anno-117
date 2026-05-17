@@ -22,6 +22,90 @@
         "fuelProduct"
       ]
     },
+    "dlcs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "guid": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "iconPath": {
+            "type": "string"
+          },
+          "locaText": {
+            "type": "object",
+            "properties": {
+              "english": {
+                "type": "string"
+              },
+              "german": {
+                "type": "string"
+              },
+              "spanish": {
+                "type": "string"
+              },
+              "french": {
+                "type": "string"
+              },
+              "italian": {
+                "type": "string"
+              },
+              "japanese": {
+                "type": "string"
+              },
+              "korean": {
+                "type": "string"
+              },
+              "polish": {
+                "type": "string"
+              },
+              "brazilian": {
+                "type": "string"
+              },
+              "russian": {
+                "type": "string"
+              },
+              "simplified_chinese": {
+                "type": "string"
+              },
+              "traditional_chinese": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "english",
+              "german",
+              "spanish",
+              "french",
+              "italian",
+              "japanese",
+              "korean",
+              "polish",
+              "brazilian",
+              "russian",
+              "simplified_chinese",
+              "traditional_chinese"
+            ]
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "guid",
+          "name",
+          "iconPath",
+          "locaText",
+          "id"
+        ]
+      },
+      "title": "DLC",
+      "description": "DLC definitions with GUIDs and identifiers"
+    },
     "languages": {
       "type": "array",
       "items": {
@@ -193,7 +277,7 @@
       "title": "Region",
       "description": "Game regions data with GUID, name, icon, and localized text"
     },
-    "sessions": {
+    "fertilities": {
       "type": "array",
       "items": {
         "type": "object",
@@ -248,11 +332,25 @@
               }
             },
             "required": [
-              "english"
+              "english",
+              "german",
+              "spanish",
+              "french",
+              "italian",
+              "japanese",
+              "korean",
+              "polish",
+              "brazilian",
+              "russian",
+              "simplified_chinese",
+              "traditional_chinese"
             ]
           },
-          "region": {
-            "type": "integer"
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [
@@ -260,6 +358,89 @@
           "name",
           "iconPath",
           "locaText",
+          "regions"
+        ]
+      },
+      "title": "Fertility",
+      "description": "Island fertililities and deposits that farms/mines require to operate. Referenced by factories (neededFertility) and building buffs (addedFertility)."
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "guid": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "iconPath": {
+            "type": "string"
+          },
+          "region": {
+            "type": "integer"
+          },
+          "locaText": {
+            "type": "object",
+            "properties": {
+              "english": {
+                "type": "string"
+              },
+              "german": {
+                "type": "string"
+              },
+              "spanish": {
+                "type": "string"
+              },
+              "french": {
+                "type": "string"
+              },
+              "italian": {
+                "type": "string"
+              },
+              "japanese": {
+                "type": "string"
+              },
+              "korean": {
+                "type": "string"
+              },
+              "polish": {
+                "type": "string"
+              },
+              "brazilian": {
+                "type": "string"
+              },
+              "russian": {
+                "type": "string"
+              },
+              "simplified_chinese": {
+                "type": "string"
+              },
+              "traditional_chinese": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "english",
+              "german",
+              "spanish",
+              "french",
+              "italian",
+              "japanese",
+              "korean",
+              "polish",
+              "brazilian",
+              "russian",
+              "simplified_chinese",
+              "traditional_chinese"
+            ]
+          }
+        },
+        "required": [
+          "guid",
+          "name",
+          "iconPath",
           "region"
         ]
       },
@@ -545,6 +726,12 @@
               "simplified_chinese",
               "traditional_chinese"
             ]
+          },
+          "dlcUnlocks": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           }
         },
         "required": [
@@ -938,6 +1125,12 @@
             "items": {
               "type": "string"
             }
+          },
+          "dlcUnlocks": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           }
         },
         "required": [
@@ -1239,6 +1432,9 @@
           "cycleTime": {
             "type": "integer"
           },
+          "neededFertility": {
+            "type": "integer"
+          },
           "modulesLimit": {
             "type": "integer"
           },
@@ -1266,6 +1462,12 @@
               "type": "integer"
             }
           },
+          "dlcUnlocks": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
           "aqueductProductivityBuff": {
             "type": "integer"
           },
@@ -1283,6 +1485,7 @@
           "outputs",
           "maintenances",
           "cycleTime",
+          "neededFertility",
           "modulesLimit"
         ]
       },
@@ -1388,6 +1591,9 @@
           "cycleTime": {
             "type": "integer"
           },
+          "neededFertility": {
+            "type": "integer"
+          },
           "modulesLimit": {
             "type": "integer"
           },
@@ -1407,6 +1613,7 @@
           "inputs",
           "needsFuelInput",
           "cycleTime",
+          "neededFertility",
           "modulesLimit",
           "buffs"
         ]
@@ -1498,6 +1705,12 @@
           "fuelDurationPercent": {
             "type": "number"
           },
+          "addedFertility": {
+            "type": "integer"
+          },
+          "fertilityPercent": {
+            "type": "integer"
+          },
           "replaceWorkforce": {
             "type": "object",
             "properties": {
@@ -1515,6 +1728,9 @@
           },
           "workforceMaintenanceFactorUpgrade": {
             "type": "integer"
+          },
+          "population": {
+            "type": "number"
           },
           "additionalOutputs": {
             "type": "array",
@@ -1548,6 +1764,12 @@
               "type": "integer"
             }
           },
+          "dlcUnlocks": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
           "replaceInputs": {
             "type": "array",
             "items": {
@@ -1576,12 +1798,103 @@
           "workforceModifierInPercent",
           "productivityUpgrade",
           "fuelDurationPercent",
+          "addedFertility",
+          "fertilityPercent",
           "replaceWorkforce",
-          "workforceMaintenanceFactorUpgrade"
+          "workforceMaintenanceFactorUpgrade",
+          "population"
         ]
       },
       "title": "BuildingBuff",
       "description": "Building buff assets with upgrade properties for buildings, residences, and factories. Determine what the effect is. See effects for where they apply."
+    },
+    "areaBuffs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "guid": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "iconPath": {
+            "type": "string"
+          },
+          "locaText": {
+            "type": "object",
+            "properties": {
+              "english": {
+                "type": "string"
+              },
+              "german": {
+                "type": "string"
+              },
+              "spanish": {
+                "type": "string"
+              },
+              "french": {
+                "type": "string"
+              },
+              "italian": {
+                "type": "string"
+              },
+              "japanese": {
+                "type": "string"
+              },
+              "korean": {
+                "type": "string"
+              },
+              "polish": {
+                "type": "string"
+              },
+              "brazilian": {
+                "type": "string"
+              },
+              "russian": {
+                "type": "string"
+              },
+              "simplified_chinese": {
+                "type": "string"
+              },
+              "traditional_chinese": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "english",
+              "german",
+              "spanish",
+              "french",
+              "italian",
+              "japanese",
+              "korean",
+              "polish",
+              "brazilian",
+              "russian",
+              "simplified_chinese",
+              "traditional_chinese"
+            ]
+          },
+          "addedFertility": {
+            "type": "integer"
+          },
+          "fertilityPercent": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "guid",
+          "name",
+          "iconPath",
+          "locaText",
+          "addedFertility",
+          "fertilityPercent"
+        ]
+      },
+      "title": "AreaBuff",
+      "description": "Area buff assets that add a fertility to all buildings in range."
     },
     "effects": {
       "type": "array",
@@ -1667,17 +1980,23 @@
           "targetsIsAllProduction": {
             "type": "boolean"
           },
-          "effectScope": {
-            "type": "string"
-          },
           "excludeEffectSourceGUID": {
             "type": "boolean"
           },
           "effectDuration": {
             "type": "integer"
           },
+          "effectScope": {
+            "type": "string"
+          },
           "source": {
             "type": "string"
+          },
+          "dlcUnlocks": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           }
         },
         "required": [
@@ -1686,16 +2005,15 @@
           "iconPath",
           "locaText",
           "buffs",
-          "targets",
           "targetsIsAllProduction",
-          "effectScope",
           "excludeEffectSourceGUID",
           "effectDuration",
+          "effectScope",
           "source"
         ]
       },
       "title": "Effect",
-      "description": "Building buff combined with targets (pool of building GUIDs). Source is an enum with literals 'module', 'tech', 'festival', 'veneration-effect', 'session-even', 'island-event'"
+      "description": "Building buff combined with targets (pool of building GUIDs). Source is an enum with literals 'module', 'tech', 'festival', 'veneration-effect', 'session-event', 'island-event', 'building'"
     },
     "techs": {
       "type": "array",
@@ -1882,16 +2200,78 @@
                       "buffScaling"
                     ]
                   }
+                },
+                "title": {
+                  "type": "object",
+                  "properties": {
+                    "english": {
+                      "type": "string"
+                    },
+                    "german": {
+                      "type": "string"
+                    },
+                    "spanish": {
+                      "type": "string"
+                    },
+                    "french": {
+                      "type": "string"
+                    },
+                    "italian": {
+                      "type": "string"
+                    },
+                    "japanese": {
+                      "type": "string"
+                    },
+                    "korean": {
+                      "type": "string"
+                    },
+                    "polish": {
+                      "type": "string"
+                    },
+                    "brazilian": {
+                      "type": "string"
+                    },
+                    "russian": {
+                      "type": "string"
+                    },
+                    "simplified_chinese": {
+                      "type": "string"
+                    },
+                    "traditional_chinese": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "english",
+                    "german",
+                    "spanish",
+                    "french",
+                    "italian",
+                    "japanese",
+                    "korean",
+                    "polish",
+                    "brazilian",
+                    "russian",
+                    "simplified_chinese",
+                    "traditional_chinese"
+                  ]
                 }
               },
               "required": [
                 "effect",
-                "milestones"
+                "milestones",
+                "title"
               ]
             }
           },
           "wonder": {
             "type": "integer"
+          },
+          "dlcUnlocks": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           }
         },
         "required": [
@@ -1993,6 +2373,12 @@
           },
           "rarity": {
             "type": "string"
+          },
+          "dlcUnlocks": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           }
         },
         "required": [
@@ -2094,9 +2480,11 @@
     }
   },
   "required": [
+    "dlcs",
     "languages",
     "needConsumptions",
     "regions",
+    "fertilities",
     "sessions",
     "needAttributes",
     "needCategories",
@@ -2110,6 +2498,7 @@
     "factories",
     "modules",
     "buildingBuffs",
+    "areaBuffs",
     "effects",
     "techs",
     "patrons",

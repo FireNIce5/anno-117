@@ -12,7 +12,7 @@ import { DarkMode, ResidencePresenter } from './views';
 import { CategoryPresenter } from './presenters';
 import { ConstantsConfig, NeedConsumptionConfig, TextConfig } from './types.config';
 import { Storage as SubStorage, Island, Region, Session } from './world';
-import { Effect, ProductCategory } from './production';
+import { Effect, ProductCategory, Fertility, AreaBuff } from './production';
 
 
 declare const $: any;
@@ -49,8 +49,10 @@ window.view = {
     texts: {},
     dlcs: [],
     dlcsMap: new Map(),
+    dlcsGuidMap: new Map(),
     // Add missing properties that are referenced in the original code
     globalEffects: [] as Effect[],
+    areaBuffs: [] as AreaBuff[],
     selectedFactory: ko.observable(null),
     selectedProduct: ko.observable(null),
     selectedPopulationLevel: ko.observable(null),
@@ -347,6 +349,7 @@ function init(_isFirstRun: boolean, configVersion: string | null): void {
     // Set up DLCs
     window.view.dlcs = [];
     window.view.dlcsMap = new Map();
+    window.view.dlcsGuidMap = new Map();
 
     const settingsStorage = localStorage ? new SubStorage("calculatorSettings") : undefined;
     const sessionStorage = localStorage ? new SubStorage("sessionSettings") : undefined;
@@ -355,6 +358,7 @@ function init(_isFirstRun: boolean, configVersion: string | null): void {
         const d = new (require('./util').DLC)(dlc);
         window.view.dlcs.push(d);
         window.view.dlcsMap.set(d.id, d);
+        if (d.guid) window.view.dlcsGuidMap.set(d.guid, d);
         if (settingsStorage) {
             let id = d.id;
             if (settingsStorage.getItem(id) != null)
@@ -412,6 +416,22 @@ function init(_isFirstRun: boolean, configVersion: string | null): void {
         globalEffects.push(r);
     }
 
+    // Create fertilities globally so AreaBuffs can resolve addedFertility references
+    for (let f of (params.fertilities || [])) {
+        if (!window.view.assetsMap.has(f.guid)) {
+            const fertility = new Fertility(f);
+            window.view.assetsMap.set(fertility.guid, fertility);
+        }
+    }
+
+    // Set up global area buffs
+    const globalAreaBuffs = window.view.areaBuffs as AreaBuff[];
+    for (let ab of (params.areaBuffs || [])) {
+        const areaBuff = new AreaBuff(ab, window.view.assetsMap);
+        window.view.assetsMap.set(areaBuff.guid, areaBuff);
+        globalAreaBuffs.push(areaBuff);
+    }
+
     // Set up persistence for global effects
     if (localStorage) {
         const globalEffectsStorage = new SubStorage("globalEffects");
@@ -424,11 +444,28 @@ function init(_isFirstRun: boolean, configVersion: string | null): void {
                 effect.scaling(parseFloat(savedValue));
             }
 
+            // Subscribe to changes for automatic saving
+            effect.scaling.subscribe(val => {
+                globalEffectsStorage.setItem(storageKey, val);
+            });
+
+        }
+
+        for (const areaBuff of globalAreaBuffs) {
+            const storageKey = `${areaBuff.guid}.scaling`;
+
+            // Load saved scaling value
+            const savedValue = globalEffectsStorage.getItem(storageKey);
+            if (savedValue != null) {
+                areaBuff.scaling(parseFloat(savedValue));
+            }
+
+            // Subscribe to changes for automatic saving
+            areaBuff.scaling.subscribe(val => {
+                globalEffectsStorage.setItem(storageKey, val);
+            });
         }
     }
-
-
-    
 
     // Set up regions
     window.view.regions = [];

@@ -33,11 +33,11 @@ export class NeedCategory extends NamedElement{
  */
 export class Need {
     public guid: number;
-    public residents: number;
     public product: Product;
     public category: NeedCategory;
     public supplyWeight: number;
     public attributes: Map<NamedElement, number>;
+    public residents: number;
     public available: KnockoutComputed<boolean>;
 
 
@@ -202,7 +202,7 @@ export class ResidenceNeed {
         if (!need) {
             throw new Error(`Need with GUID ${config.need} not found in assetsMap`);
         }
-        this.need = need;
+        this.need = need as Need;
         this.needConsumptionRate = config.needConsumptionRate || 0;
 
         this.checked = ko.observable(true); // set from populationLevelNeed which is constructed later({
@@ -572,4 +572,4 @@ export class RecipeList extends NamedElement {
 
         this.selectedRecipe().buildings.constructed(1);
     }
-} 
+}

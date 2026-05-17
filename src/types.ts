@@ -27,7 +27,7 @@ export interface NamedElementConfig {
   name?: string;
   locaText?: LocaTextConfig;
   iconPath?: string;
-  dlcs?: string[];
+  dlcUnlocks?: number[];
   available?: boolean;
   notes?: string;
 }
@@ -37,6 +37,7 @@ export interface OptionConfig extends NamedElementConfig {
 }
 
 export interface DLCConfig extends OptionConfig {
+  guid?: number;
   id?: string;
   dependentObjects?: any[];
 }
@@ -126,6 +127,7 @@ export interface WorkforceConfig extends NamedElementConfig {
 
 export interface RegionConfig extends NamedElementConfig {
   islands?: string[];
+  iconPath: string;
 }
 
 export interface SessionConfig extends NamedElementConfig {
@@ -162,6 +164,7 @@ export interface ViewConfig {
   texts: Record<string, any>;
   dlcs: any[];
   dlcsMap: Map<string, any>;
+  dlcsGuidMap: Map<number, any>;
   islands?: KnockoutObservableArray<any>;
   selectedIsland?: KnockoutObservable<any>;
   selectedResidenceEffectView?: KnockoutObservable<any>;

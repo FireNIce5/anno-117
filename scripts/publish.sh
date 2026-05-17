@@ -57,7 +57,7 @@ else
 fi
 
 # Step 5: Draft commit message
-DRAFT_FILE=$(mktemp)
+DRAFT_FILE="RELEASE_NOTES_DRAFT.md"
 cat > "$DRAFT_FILE" << EOF
 Release $TAG
 
@@ -66,14 +66,11 @@ EOF
 
 echo -e "${GREEN}✓ Generated commit summary${NC}"
 echo ""
-echo "Opening draft in editor..."
-
-# Open in default editor (respects EDITOR environment variable)
-${EDITOR:-vi} "$DRAFT_FILE"
-
-# Wait for user to finish editing (important for editors like Notepad++ that don't block)
+DRAFT_ABS_PATH=$(cd "$(dirname "$DRAFT_FILE")" && pwd)/$(basename "$DRAFT_FILE")
+echo -e "${YELLOW}Draft commit message saved to:${NC}"
+echo "  $DRAFT_ABS_PATH"
 echo ""
-echo -e "${YELLOW}Edit the commit message in your editor, save, and close it.${NC}"
+echo -e "${YELLOW}Edit the file, save it, then return here.${NC}"
 read -p "Press Enter when you're done editing..."
 
 # Step 6: Read the updated draft
@@ -102,9 +99,15 @@ if [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "Y" ]; then
     exit 1
 fi
 
-# Step 6.5: Commit version changes on main
+# Step 6.5: Build with new version before committing
+echo "Building project with new version..."
+npm run build
+
+echo -e "${GREEN}✓ Build complete${NC}"
+
+# Step 6.6: Commit version changes on main
 echo "Committing version changes on main..."
-git add -A
+git add -u
 git commit -m "Release $TAG"
 
 echo -e "${GREEN}✓ Committed version changes on main${NC}"

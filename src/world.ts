@@ -14,7 +14,7 @@ import {
 } from './types.config';
 
 import { Workforce, ResidenceBuilding, PopulationLevel, PopulationGroup } from './population';
-import { Product, MetaProduct, Item, ProductCategory, AppliedBuff, Buff, Effect, Patron } from './production';
+import { Product, MetaProduct, Item, ProductCategory, AppliedBuff, Buff, Effect, Patron, Fertility, IslandFertility, AreaBuff } from './production';
 import { PublicConsumerBuilding, Factory, Consumer } from './factories';
 import { ResidenceEffectView } from './views';
 import { Need, NeedCategory, RecipeList, } from './consumption';
@@ -166,6 +166,10 @@ export class Region extends NamedElement {
         
         super(regionConfig);
         this.guid = regionConfig.guid;
+
+        if (config.iconPath && window.params && window.params.icons) {
+            this.icon = window.params.icons[config.iconPath];
+        }
     }
 }
 
@@ -528,6 +532,10 @@ export class Island {
     public factories: Factory[];
     public categories: ProductCategory[];
     public multiFactoryProducts: Product[];
+    public islandFertilities: Map<number, IslandFertility>;
+    public visibleIslandFertilities: IslandFertility[];
+    public allFertilitiesSet: KnockoutComputed<boolean>;
+    public fertilitiesExpanded: KnockoutObservable<boolean>;
     public items: Item[];
     public replaceInputItems: Item[];
     public extraGoodItems: Item[];
@@ -537,7 +545,8 @@ export class Island {
     public allEffects: Effect[];
     public availableEffects: KnockoutObservableArray<Effect>;
     
-    public availablePatrons: Patron[];
+    public allPatrons: Patron[];
+    public availablePatrons: KnockoutObservable<Patron[]>;
     public selectedPatron: KnockoutObservable<Patron | null>;
     public devotion: KnockoutObservable<number>;
     public availablePatronEffects: KnockoutComputed<Effect[]>;
@@ -621,6 +630,7 @@ export class Island {
         var persistInt: (obj: any, attributeName: string, storageName?: string) => void;
         var persistFloat: (obj: any, attributeName: string, storageName?: string) => void;
         var persistString: (obj: any, attributeName: string, storageName?: string) => void;
+        var persistNeedChecked: (need: any, storageKey: string) => void;
         var persistBuildings: (obj: any) => void;
 
         if (localStorage) {
@@ -648,7 +658,7 @@ export class Island {
                         if (val == null || !isFinite(val) || isNaN(val))
                             return;
 
-                        localStorage.setItem(id, val.toString());
+                        localStorage.setItem(id, val);
                     });
 
                 }
@@ -667,7 +677,7 @@ export class Island {
                         if (val == null || !isFinite(val) || isNaN(val))
                             return;
 
-                        localStorage.setItem(id, val.toString());
+                        localStorage.setItem(id, val);
                     });
                 }
             }
@@ -690,8 +700,32 @@ export class Island {
                 persistBool(obj.buildings as BuildingsCalc, "fullyUtilizeConstructed", obj.guid + ".buildings.fullyUtilizeConstructed");
             }
 
+            persistNeedChecked = (need: any, storageKey: string) => {
+                // Initial load: skip restoring when need is DLC-locked
+                if (need.available()) {
+                    if (localStorage.getItem(storageKey) != null)
+                        need.checked(parseInt(localStorage.getItem(storageKey)));
+                }
+
+                // Write only when available
+                need.checked.subscribe((val: boolean) => {
+                    if (need.available())
+                        localStorage.setItem(storageKey, val ? "1" : "0");
+                });
+
+                // React to DLC toggle
+                need.available.subscribe((isAvailable: boolean) => {
+                    if (isAvailable) {
+                        if (localStorage.getItem(storageKey) != null)
+                            need.checked(parseInt(localStorage.getItem(storageKey)));
+                        else
+                            need.checked(view.islandManager.activateAllNeeds.checked());
+                    }
+                });
+            };
+
         } else {
-            persistBool = persistInt = persistFloat = persistString = persistBuildings = () => { };
+            persistBool = persistInt = persistFloat = persistString = persistBuildings = persistNeedChecked = () => { };
         }
 
         // objects
@@ -713,8 +747,9 @@ export class Island {
         this.workforce = [];
         
         // Initialize patron-related properties
-        this.availablePatrons = [];
+        this.allPatrons = [];
         this.selectedPatron = ko.observable(null);
+        
         this.devotion = ko.observable(0);
 
         let products: Product[] = [];
@@ -773,6 +808,49 @@ export class Island {
         //         this.recipeLists.push(new RecipeList(list, assetsMap, this));
         // }
 
+        // Fertilities are created globally in main.ts; reuse them here
+        const islandFertilityConfigs: Fertility[] = [];
+        for (let f of (params.fertilities || [])) {
+            let fertility = assetsMap.get(f.guid) as Fertility;
+            if (!fertility) {
+                fertility = new Fertility(f);
+                assetsMap.set(fertility.guid, fertility);
+            }
+            islandFertilityConfigs.push(fertility);
+        }
+
+        // Collect global AreaBuff instances (created in main.ts, available via assetsMap copy)
+        const globalAreaBuffs = Array.from(assetsMap.values()).filter(a => a instanceof AreaBuff) as AreaBuff[];
+
+        // Per-island IslandFertility instances
+        this.islandFertilities = new Map();
+        const isMetaRegion = this.region.id === 'Meta';
+        if (!this.isAllIslands()) {
+            for (const fertility of islandFertilityConfigs) {
+                const matchesRegion = isMetaRegion || fertility.regions.length === 0 || fertility.regions.includes(this.region.id || '');
+                const islandFertility = new IslandFertility(fertility, globalAreaBuffs);
+
+                // Default to unchecked if it's not naturally present in this region
+                if (!matchesRegion) {
+                    islandFertility.checked(false);
+                }
+
+                this.islandFertilities.set(fertility.guid, islandFertility);
+            }
+        }
+
+        // Visible fertilities: Meta shows all; other regions show only region-matching ones
+        this.visibleIslandFertilities = Array.from(this.islandFertilities.values())
+            .filter(f => isMetaRegion || f.fertility.regions.length === 0 || f.fertility.regions.includes(this.region.id || ''));
+
+        this.allFertilitiesSet = ko.pureComputed(() => {
+            for (const f of this.visibleIslandFertilities) {
+                if (!f.checked()) return false;
+            }
+            return true;
+        });
+        this.fertilitiesExpanded = ko.observable(false);
+
         for (let buff of (params.buildingBuffs || [])) {
             let b = new Buff(buff, assetsMap);
             assetsMap.set(b.guid, b);
@@ -816,9 +894,9 @@ export class Island {
             }
         }
         this.availableEffects = ko.pureComputed(() => {
-            // For meta session (All Islands), show all effects
-            if (this.isAllIslands()) {
-                return this.allEffects.filter(e => e.available() && this.patronEffects.indexOf(e) == -1);
+            // For meta session (All Islands) or meta region islands, show all effects
+            if (this.isAllIslands() || this.region.id === 'Meta') {
+                return this.allEffects.filter(e => e.source != 'building' && e.available() && this.patronEffects.indexOf(e) == -1);
             }
 
             // For regular islands, only show effects that have targets in this island's session
@@ -852,30 +930,38 @@ export class Island {
         for (let patron of (params.patrons || [])) {
             let p = new Patron(patron, assetsMap);
             assetsMap.set(p.guid, p);
-            this.availablePatrons.push(p);
+            this.allPatrons.push(p);
             p.localEffects?.forEach(group => this.patronEffects.push(group.effect))
         }
+
+        this.availablePatrons = ko.pureComputed(() => this.allPatrons.filter(p => p.available()))
+        
+        // Link island selection to per-patron selected observables for DLC locking
+        this.selectedPatron.subscribe((newPatron) => {
+            this.allPatrons.forEach(p => p.selected(p === newPatron));
+        });
+        this.allPatrons.forEach(p => p.selected(p === this.selectedPatron()));
         
         // Set up computed property for available patron effects based on current patron and devotion
         this.availablePatronEffects = ko.computed(() => {
             const patron = this.selectedPatron();
             const devotionLevel = this.devotion();
-            
+
             // Reset all patron effects scaling to 0 when no patron or no devotion
             for (const effect of this.patronEffects) {
                 effect.scaling(0);
             }
-            
+
             if (!patron || !patron.localEffects || devotionLevel <= 0) return [];
-            
+
             const effects: Effect[] = [];
             for (const localEffect of patron.localEffects) {
                 // Find the highest milestone that the devotion level meets (milestones are ordered ascending)
                 const achievedMilestones = localEffect.milestones.filter((m: any) => devotionLevel >= m.devotion);
                 if (achievedMilestones.length === 0) continue; // No milestone achieved
-                
+
                 const milestone = achievedMilestones[achievedMilestones.length - 1]; // Take the last (highest) one
-                
+
                 const effect = localEffect.effect;
                 // Set the effect scaling based on milestone
                 effect.scaling(milestone.buffScaling);
@@ -883,7 +969,7 @@ export class Island {
             }
             return effects;
         });
-
+        this.availablePatronEffects.subscribe(() => { }); // Ensure computed is active even if not bound in UI
 
         for (let item of (params.items || [])) {
             let i = new Item(item, assetsMap, this.region);
@@ -914,6 +1000,12 @@ export class Island {
             this.extraGoodItems.sort((a, b) => a.name().localeCompare(b.name()));
         });
 
+
+        if (localStorage) {
+            for (const [guid, islandFertility] of this.islandFertilities) {
+                persistBool(islandFertility, "checked", `island.fertility.${guid}.checked`);
+            }
+        }
 
         this.consumers.forEach(f => {
             f.initDemands(assetsMap);
@@ -999,7 +1091,7 @@ export class Island {
             // Persist selected patron by GUID
             if (localStorage.getItem("selectedPatron") != null) {
                 const patronGuid = parseInt(localStorage.getItem("selectedPatron"));
-                const patron = this.availablePatrons.find(p => p.guid === patronGuid);
+                const patron = this.allPatrons.find(p => p.guid === patronGuid);
                 if (patron) {
                     this.selectedPatron(patron);
                 }
@@ -1023,6 +1115,13 @@ export class Island {
             var b = new ResidenceBuilding(building, assetsMap, this);
             assetsMap.set(b.guid, b);
             this.residenceBuildings.push(b);
+        }
+
+        // Apply population buffs from effects to residences.
+        // Residences are created after the initial applyBuffs pass, so we need a second pass here.
+        const deduplicatedEffects = new Set([...this.allEffects, ...this.patronEffects]);
+        for (const effect of deduplicatedEffects) {
+            effect.applyBuffsToResidences(assetsMap);
         }
 
         for (let group of params.populationGroups) {
@@ -1075,7 +1174,7 @@ export class Island {
         // Persist population-level needs instead of residence-level needs
         for (let populationLevel of this.populationLevels) {
             for (let need of populationLevel.needs) {
-                persistBool(need, "checked", `${populationLevel.guid}[${need.need.guid}].checked`);
+                persistNeedChecked(need, `${populationLevel.guid}[${need.need.guid}].checked`);
                 persistString(need, "notes", `${populationLevel.guid}[${need.need.guid}].notes`);
             }
         }
@@ -1178,6 +1277,14 @@ export class Island {
             }
         }
                 
+    }
+
+    getIslandFertility(guid: number): IslandFertility | undefined {
+        return this.islandFertilities?.get(guid);
+    }
+
+    getVisibleIslandFertility(guid: number): IslandFertility | undefined {
+        return this.visibleIslandFertilities.find(f => f.fertility.guid === guid);
     }
 } 
 

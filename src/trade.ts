@@ -120,13 +120,6 @@ export class TradeRoute implements Supplier {
 
     // === SUPPLIER INTERFACE IMPLEMENTATION ===
 
-    /**
-     * Returns the amount imported to the receiving island (Supplier interface)
-     */
-    defaultProduction(): number {
-        return this.userSetAmount();
-    }
-
     currentProduction(): number {
         return Math.max(this.userSetAmount(), this.amount());
     }

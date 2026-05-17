@@ -1,4 +1,4 @@
-import { createFloatInput, EPSILON, ko } from './util';
+import { createFloatInput, ko } from './util';
 import { ExtraGoodProduction, Product } from './production';
 import { Island } from './world';
 import { Factory } from './factories';
@@ -13,7 +13,6 @@ export interface Supplier {
     readonly product: Product;
 
     // Production capabilities
-    defaultProduction(): number;           // Current/baseline production amount
     currentProduction(): number;
     canSupply(): boolean;    // Can this supplier fulfill amount?
 
@@ -66,16 +65,6 @@ export class PassiveTradeSupplier implements Supplier {
         this.island = island;
         this.amount = ko.observable(0);
         this.userSetAmount = createFloatInput(0, 0);
-    }
-
-    /**
-     * Only used if needed
-     */
-    defaultProduction(): number {
-        if (this.isDefaultSupplier())
-            return 0; // when set as default supplier, userSetAmount is ignored
-
-        return this.userSetAmount(); 
     }
 
     currentProduction(): number {
@@ -166,20 +155,6 @@ export class ExtraGoodSupplier implements Supplier {
         return totalRatio;
     }
 
-    defaultProduction(): number {
-        // other demands determine the throughput of the factory
-        if (this.throughput() + EPSILON < this.factory.throughput())
-            return this.currentProduction();
-
-        var otherThroughput = Math.max(this.factory.throughputByExistingBuildings(), this.factory.throughputByOutput());
-        
-        if (otherThroughput < EPSILON)
-            return 0;
-        
-        return this.factory.throughput() / otherThroughput * this.currentProduction();
-
-    }
-
     /**
      * Returns the total amount from all extra goods production entries
      * Sum of all ExtraGoodProduction.amount() in the list
@@ -218,7 +193,12 @@ export class ExtraGoodSupplier implements Supplier {
      * @param amount - Requested extra good production amount
      */
     setDemand(amount: number): void {
-        if (amount <= 0 || this.productionList.length === 0) return;
+        if (this.productionList.length === 0) return;
+
+        if (amount <= 0) {
+            this.throughput(0);
+            return;
+        }
 
         // Calculate the production ratio: extra_good_amount per factory_input_amount
         // For each entry: entry.amount() = item.scaling() * defaultAmount * factory.inputAmount / additionalOutputCycle

@@ -40,7 +40,7 @@ ko.amdTemplateEngine.loader = function (templateName: string, done: Function) {
 };
 
 /** Version string for the calculator application */
-export let versionCalculator = "1.8";
+export let versionCalculator = "2.0";
 /** Flag indicating if this is a preview version */
 export let isPreview = false;
 /** Accuracy threshold for floating point comparisons */
@@ -273,6 +273,7 @@ export class NamedElement {
     public locaText: LocaTextConfig | { [key: string]: string };
     public icon?: string;
     public dlcs?: DLC[];
+    public dlcUnlocks: number[];
     public available: KnockoutComputed<boolean>;
     public notes?: KnockoutObservable<string>;
     public dependentObjects?: KnockoutObservableArray<any>;
@@ -321,8 +322,24 @@ export class NamedElement {
         }
 
         // Set up DLC management
-        this.available = ko.pureComputed(() => true);
         this.dlcLockingObservables = [];
+        this.dlcUnlocks = config.dlcUnlocks || [];
+
+        if (config.dlcUnlocks && config.dlcUnlocks.length > 0) {
+            const dlcsGuidMap: Map<number, DLC> | undefined = (window as any).view?.dlcsGuidMap;
+            if (dlcsGuidMap) {
+                this.dlcs = config.dlcUnlocks
+                    .map(guid => dlcsGuidMap.get(guid))
+                    .filter((d): d is DLC => d != null);
+            }
+        }
+
+        if (this.dlcs && this.dlcs.length > 0) {
+            const dlcs = this.dlcs;
+            this.available = ko.pureComputed(() => dlcs.some(d => d.checked()));
+        } else {
+            this.available = ko.pureComputed(() => true);
+        }
     }
 
     /**
@@ -330,7 +347,7 @@ export class NamedElement {
      * @param obs - The observable to lock
      */
     lockDLCIfSet(obs: any): void {
-        if (!this.dlcs || this.dlcs.length !== 1) {
+        if (!this.dlcs || this.dlcs.length !== 1 || typeof obs !== 'function') {
             return;
         }
 

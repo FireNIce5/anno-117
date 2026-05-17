@@ -1,6 +1,6 @@
 import { NamedElement, EPSILON, ko, dummyObservableArray, dummyComputed, getForcedDefaultSupplier } from './util';
 import {  AssetsMap } from './types';
-import { ProductConfig, BuildingBuffConfig, PatronsConfig, EffectConfig, ItemConfig, ProductFilterConfig } from './types.config';
+import { ProductConfig, BuildingBuffConfig, PatronsConfig, EffectConfig, ItemConfig, ProductFilterConfig, FertilityConfig, AreaBuffConfig } from './types.config';
 import { Workforce } from './population';
 import { Region, Constructible, isConstructible, Island } from './world';
 
@@ -23,6 +23,7 @@ export class Product extends NamedElement {
     public guid: number;
     public isAbstract: boolean;
     public isConstructionMaterial: boolean;
+    public regions: Region[];
     public factories: Factory[];
     public availableFactories: KnockoutObservableArray<Factory>;
     public extraGoodProductionList?: ExtraGoodProductionList;
@@ -32,8 +33,8 @@ export class Product extends NamedElement {
     public demands: KnockoutObservableArray<Demand>; // All consumers demanding this product
     public totalDemand: KnockoutComputed<number>; // Total demand from all consumers and trade routes
     public totalDemandNoRoutes: KnockoutComputed<number>; // Total demand from all consumers
-    public totalDefaultProduction: KnockoutComputed<number>; // Production from non-default suppliers
     public totalCurrentProduction: KnockoutComputed<number>; // Production from all suppliers
+    private totalProductionWithoutDefaultSupplier: KnockoutComputed<number>; // Production from all suppliers except the default one
     public excessProduction: KnockoutObservable<number>; // Excess when non-default suppliers exceed demand
     public demandCalculationSubscription!: KnockoutComputed<void>; // Updates supplier demands based on total demand
 
@@ -70,6 +71,7 @@ export class Product extends NamedElement {
             name: config.name,
             locaText: config.locaText || {},
             iconPath: config.iconPath || "",
+            dlcUnlocks: config.dlcUnlocks || []
         };
         
         super(parentConfig);
@@ -77,6 +79,8 @@ export class Product extends NamedElement {
 
         this.isAbstract = config.isAbstract || false;
         this.isConstructionMaterial = config.isConstructionMaterial || false;
+
+        this.regions = (config.associatedRegions || []).map(r => window.view.literalsMap.get(r));
 
         this.factories = [];
         this.availableFactories = dummyObservableArray("Product.availableFactories");
@@ -91,8 +95,8 @@ export class Product extends NamedElement {
         // Will be initialized properly in initSuppliers after suppliers are created
         this.totalDemand = dummyComputed("product.totalDemand");
         this.totalDemandNoRoutes = dummyComputed("product.totalDemandNoRoutes");
-        this.totalDefaultProduction = dummyComputed("product.nonDefaultSupplierProduction");
         this.totalCurrentProduction = dummyComputed("product.currentSupplierProduction");
+        this.totalProductionWithoutDefaultSupplier = dummyComputed("product.totalProductionWithoutDefaultSupplier");
 
         // Initialize supplier management (will be fully set up in initSuppliers)
         this.defaultSupplier = ko.observable(null);
@@ -178,11 +182,12 @@ export class Product extends NamedElement {
             // Create one ExtraGoodSupplier per factory
             this.extraGoodSuppliers = [];
             for (const [factory, entries] of entriesByFactory.entries()) {
-                if (factory.product.guid == this.guid)
-                    continue; // Skip self-effecting production
-
+                // Deduplicate entries to prevent double-counting if initSuppliers is called multiple times
+                // or if assets are shared between islands (e.g. All Islands vs regular island)
+                const uniqueEntries = Array.from(new Set(entries));
+                
                 const supplier = new ExtraGoodSupplier(factory, this, island);
-                supplier.productionList = entries;
+                supplier.productionList = uniqueEntries;
                 this.extraGoodSuppliers.push(supplier);
                 factory.addExtraGoodSupplier(supplier);
             }
@@ -245,17 +250,6 @@ export class Product extends NamedElement {
             return sum;
         });
 
-        this.totalDefaultProduction = ko.pureComputed(() => {
-            let sum = 0;
-
-            // Sum production from all suppliers except the default one
-            for (const supplier of this.availableSuppliers()) {
-                sum += supplier.defaultProduction();
-            }
-
-            return sum;
-        });
-
         this.totalCurrentProduction = ko.pureComputed(() => {
             let sum = 0;
 
@@ -268,22 +262,28 @@ export class Product extends NamedElement {
             return sum;
         });
 
+        // extra observable for demandCalculationSubscription; without it demandCalculationSubscription could read the unupdated value from totalCurrentProduction when switching suppliers and then not get called again when totalCurrentProduction is updated
+        this.totalProductionWithoutDefaultSupplier = ko.pureComputed(() => {
+            let sum = 0;
+
+            for (const supplier of this.availableSuppliers()) {
+                if (!supplier.isDefaultSupplier())
+                    sum += supplier.currentProduction();
+            }
+
+            return sum;
+        });
+
         // Update supplier demands when total demand or supplier production changes
         this.demandCalculationSubscription = ko.computed(() => {
-            const total = this.totalDemand();
-            const defaultProd = this.totalDefaultProduction();
+            const demand = this.totalDemand();
+            const prod = this.totalCurrentProduction();
             const defaultSupp = this.defaultSupplier();
             
-            if (defaultSupp === null) {
-                this.excessProduction(0);
-            } else if (defaultProd >= total) {
-                // Non-default suppliers produce more than needed
-                this.excessProduction(defaultProd - total);
-                defaultSupp.setDemand(0);
-            } else {
-                // Default supplier needs to fill the gap
-                this.excessProduction(0);
-                const remaining = total - defaultProd + defaultSupp.defaultProduction();
+            this.excessProduction(Math.max(0, prod - demand));
+
+            if (defaultSupp != null) {
+                const remaining = Math.max(0, demand - this.totalProductionWithoutDefaultSupplier());
                 defaultSupp.setDemand(remaining);
             }
         });
@@ -386,7 +386,7 @@ export class MetaProduct extends NamedElement {
             name: config.name,
             locaText: config.locaText || {},
             iconPath: config.iconPath || "",
-            dlcs: []
+            dlcUnlocks: config.dlcUnlocks || []
         };
         
         super(parentConfig);
@@ -473,7 +473,7 @@ export class ProductCategory extends NamedElement {
             guid: config.guid,
             locaText: config.locaText || {},
             iconPath: config.iconPath || "",
-            dlcs: []
+            dlcUnlocks: (config as any).dlcUnlocks
         };
         
         super(parentConfig);
@@ -489,6 +489,20 @@ export class ProductCategory extends NamedElement {
             }
             return product;
         }).filter((p: any) => p != null && p instanceof Product);
+    }
+}
+
+/**
+ * Represents a fertility or deposit type required by farms/mines
+ */
+export class Fertility extends NamedElement {
+    public guid: number;
+    public regions: string[];
+
+    constructor(config: FertilityConfig) {
+        super(config);
+        this.guid = config.guid;
+        this.regions = config.regions || [];
     }
 }
 
@@ -519,6 +533,9 @@ export class Buff extends NamedElement {
         amount: number;
     }[];
     public additionalWorkforces?: Workforce[];
+    public addedFertility?: Fertility;
+    public fertilityPercent: number;
+    public population: number;
 
     /**
      * Creates a new Buff instance
@@ -542,7 +559,16 @@ export class Buff extends NamedElement {
         this.productivityUpgrade = config.productivityUpgrade;
         this.fuelDurationPercent = config.fuelDurationPercent;
         this.workforceMaintenanceFactorUpgrade = config.workforceMaintenanceFactorUpgrade;
-        
+        this.fertilityPercent = config.fertilityPercent ?? 0;
+        this.population = config.population ?? 0;
+
+        if (config.addedFertility) {
+            const fertility = _assetsMap.get(config.addedFertility);
+            if (fertility instanceof Fertility) {
+                this.addedFertility = fertility;
+            }
+        }
+
         // Look up workforce replacements
         if (config.replaceWorkforce.oldWorkforce != 0){
             const newWorkforce = _assetsMap.get(config.replaceWorkforce.newWorkforce);
@@ -608,16 +634,92 @@ export class Buff extends NamedElement {
 }
 
 /**
+ * Represents an island-wide structure that artificially adds fertility
+ */
+export class AreaBuff extends Buff {
+    public scaling: KnockoutObservable<number>;
+
+    constructor(config: AreaBuffConfig, assetsMap: AssetsMap) {
+        const buffConfig: BuildingBuffConfig = {
+            guid: config.guid,
+            name: config.name,
+            iconPath: config.iconPath,
+            locaText: config.locaText,
+            isStackable: false,
+            baseProductivityUpgrade: 0,
+            workforceModifierInPercent: 0,
+            productivityUpgrade: 0,
+            fuelDurationPercent: 0,
+            replaceWorkforce: { newWorkforce: 0, oldWorkforce: 0 },
+            workforceMaintenanceFactorUpgrade: 0,
+            fertilityPercent: config.fertilityPercent,
+            addedFertility: config.addedFertility,
+            population: 0
+        };
+        super(buffConfig, assetsMap);
+        this.scaling = ko.observable(0);
+    }
+}
+
+/**
+ * Represents the fertility state on a specific island
+ */
+export class IslandFertility {
+    public fertility: Fertility;
+    public checked: KnockoutObservable<boolean>;
+    public factor: KnockoutComputed<number>;
+
+    constructor(fertility: Fertility, globalAreaBuffs: AreaBuff[]) {
+        this.fertility = fertility;
+        this.checked = ko.observable(true);
+
+        const relevantBuffs = globalAreaBuffs.filter(b => b.addedFertility?.guid === fertility.guid);
+
+        this.factor = ko.pureComputed(() => {
+            if (this.checked()) return 1.0;
+            
+            let total = 0;
+            for (const buff of relevantBuffs) {
+                if (buff.scaling() > 0) total += buff.fertilityPercent;
+            }
+            return Math.min(1.0, total / 100);
+        });
+    }
+}
+
+export class LocalPatronEffect {
+    public effect: Effect;
+    public milestones: any[];
+    public title: KnockoutComputed<string>;
+    public isPopulationBuff: boolean;
+
+    constructor(config: { effect: number; milestones: any[]; title: Record<string, any> }, assetsMap: AssetsMap) {
+        const effect = assetsMap.get(config.effect);
+        if (!effect) {
+            throw new Error(`Effect with GUID ${config.effect} not found in assetsMap`);
+        }
+        this.effect = effect as Effect;
+        this.milestones = config.milestones;
+        this.isPopulationBuff = this.effect.buffs.some(b => b.population > 0);
+        const locaText = config.title || {};
+        this.title = ko.computed(() => {
+            const view = window.view;
+            if (!view || !view.settings) return locaText["english"] || "";
+            const lang = view.settings.language() as string;
+            return locaText[lang] || locaText["english"] || "";
+        });
+    }
+}
+
+/**
  * Represents a patron that provides effects to buildings
  * Manages patron-specific bonuses and modifications
  */
 export class Patron extends NamedElement {
     public guid: number;
-    public localEffects?: {
-        effect: Effect;
-        milestones: any[];
-    }[];
+    public localEffects?: LocalPatronEffect[];
     public wonder?: Effect;
+    public selected: KnockoutObservable<boolean>;
 
     /**
      * Creates a new Patron instance
@@ -636,18 +738,12 @@ export class Patron extends NamedElement {
         super(config);
         this.guid = config.guid;
         
+        this.selected = ko.observable(false);
+        this.lockDLCIfSet(this.selected);
+
         // Look up effects for localEffects
         if (config.localEffects) {
-            this.localEffects = config.localEffects.map(localEffect => {
-                const effect = _assetsMap.get(localEffect.effect);
-                if (!effect) {
-                    throw new Error(`Effect with GUID ${localEffect.effect} not found in assetsMap`);
-                }
-                return {
-                    effect: effect as Effect,
-                    milestones: localEffect.milestones
-                };
-            });
+            this.localEffects = config.localEffects.map(le => new LocalPatronEffect(le, _assetsMap));
         }
         
         // Look up wonder object
@@ -673,6 +769,7 @@ export class Effect extends NamedElement {
     public targets: Constructible[];
     public targetGuids?: number[];
     public targetsIsAllProduction: boolean;
+    public targetsIsAllResidences: boolean;
     public effectScope: string;
     public excludeEffectSourceGUID: boolean;
     public isStackable: boolean;
@@ -703,6 +800,7 @@ export class Effect extends NamedElement {
         this.guid = config.guid;
         this.effectScope = config.effectScope;
         this.targetsIsAllProduction = config.targetsIsAllProduction;
+        this.targetsIsAllResidences = (config as any).targetsIsAllResidences || false;
         this.excludeEffectSourceGUID = config.excludeEffectSourceGUID;
         this.buffGuids = config.buffs;
         this.buffs = []; // only for displaying
@@ -717,6 +815,7 @@ export class Effect extends NamedElement {
             this.source = config.source;
 
         this.scaling = ko.observable(0);
+        this.lockDLCIfSet(this.scaling);
         this.isStackable = false;
 
     }
@@ -738,7 +837,8 @@ export class Effect extends NamedElement {
             'festival': 'festival',
             'veneration-effect': 'venerationEffects',
             'session-event': 'sessionEvent',
-            'island-event': 'islandEvent'
+            'island-event': 'islandEvent',
+            'building': 'building'
         };
 
         const translationKey = sourceKeyMap[this.source];
@@ -788,6 +888,33 @@ export class Effect extends NamedElement {
         for (const target of targets)
             for (const buff of buffs)
                 new AppliedBuff(this, buff, target, assetsMap) // constructor stores created object in target
+    }
+
+    /**
+     * Applies buffs to residence targets only.
+     * Called after residences are added to assetsMap (they are created after the initial applyBuffs pass).
+     * Uses 'populationLevel' as a duck-type check to identify ResidenceBuilding without importing it.
+     */
+    applyBuffsToResidences(assetsMap: AssetsMap) {
+        let targets: any[] = [];
+        if (this.targetsIsAllResidences) {
+            targets = Array.from(assetsMap.values()).filter(t => isConstructible(t) && 'populationLevel' in t);
+        } else if (this.targetGuids) {
+            targets = this.targetGuids.map(targetId => assetsMap.get(targetId)).filter(t => isConstructible(t) && 'populationLevel' in t);
+        }
+
+        if (targets.length === 0) return;
+
+        const buffs = this.buffGuids.map(buffId => {
+            const buff = assetsMap.get(buffId);
+            if (!buff) throw new Error(`Buff with GUID ${buffId} not found in assetsMap`);
+            return buff as Buff;
+        });
+
+        for (const target of targets) {
+            for (const buff of buffs)
+                new AppliedBuff(this, buff, target, assetsMap);
+        }
     }
 }
 
