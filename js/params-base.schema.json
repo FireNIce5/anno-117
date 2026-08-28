@@ -621,6 +621,57 @@
           "iconPath": {
             "type": "string"
           },
+          "needProduct": {
+            "type": "integer"
+          },
+          "needCategory": {
+            "type": "string"
+          },
+          "supplyWeight": {
+            "type": "number"
+          },
+          "isBuilding": {
+            "type": "boolean"
+          },
+          "needAttributes": {
+            "type": "object",
+            "properties": {
+              "Population": {
+                "type": "integer"
+              },
+              "Money": {
+                "type": "integer"
+              },
+              "Happiness": {
+                "type": "integer"
+              },
+              "Health": {
+                "type": "integer"
+              },
+              "FireSafety": {
+                "type": "integer"
+              },
+              "Belief": {
+                "type": "integer"
+              },
+              "Knowledge": {
+                "type": "integer"
+              },
+              "Prestige": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "Population",
+              "Money",
+              "Happiness",
+              "Health",
+              "FireSafety",
+              "Belief",
+              "Knowledge",
+              "Prestige"
+            ]
+          },
           "locaText": {
             "type": "object",
             "properties": {
@@ -675,70 +726,12 @@
               "simplified_chinese",
               "traditional_chinese"
             ]
-          },
-          "needProduct": {
-            "type": "integer"
-          },
-          "needCategory": {
-            "type": "string"
-          },
-          "supplyWeight": {
-            "type": "number"
-          },
-          "isBuilding": {
-            "type": "boolean"
-          },
-          "needAttributes": {
-            "type": "object",
-            "properties": {
-              "Population": {
-                "type": "integer"
-              },
-              "Money": {
-                "type": "integer"
-              },
-              "Happiness": {
-                "type": "integer"
-              },
-              "Health": {
-                "type": "integer"
-              },
-              "FireSafety": {
-                "type": "integer"
-              },
-              "Belief": {
-                "type": "integer"
-              },
-              "Knowledge": {
-                "type": "integer"
-              },
-              "Prestige": {
-                "type": "integer"
-              }
-            },
-            "required": [
-              "Population",
-              "Money",
-              "Happiness",
-              "Health",
-              "FireSafety",
-              "Belief",
-              "Knowledge",
-              "Prestige"
-            ]
-          },
-          "dlcUnlocks": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
           }
         },
         "required": [
           "guid",
           "name",
           "iconPath",
-          "locaText",
           "needProduct",
           "needCategory",
           "supplyWeight",
@@ -930,9 +923,6 @@
                 },
                 "needConsumptionRate": {
                   "type": "number"
-                },
-                "requiresItem": {
-                  "type": "integer"
                 }
               },
               "required": [
@@ -1128,12 +1118,6 @@
             "type": "array",
             "items": {
               "type": "string"
-            }
-          },
-          "dlcUnlocks": {
-            "type": "array",
-            "items": {
-              "type": "integer"
             }
           }
         },
@@ -1466,12 +1450,6 @@
               "type": "integer"
             }
           },
-          "dlcUnlocks": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
-          },
           "aqueductProductivityBuff": {
             "type": "integer"
           },
@@ -1704,7 +1682,7 @@
             "type": "number"
           },
           "productivityUpgrade": {
-            "type": "integer"
+            "type": "number"
           },
           "fuelDurationPercent": {
             "type": "number"
@@ -1735,39 +1713,6 @@
           },
           "population": {
             "type": "number"
-          },
-          "consumptionModifierInPercent": {
-            "type": "number"
-          },
-          "goodConsumptionUpgrade": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "product": {
-                  "type": "integer"
-                },
-                "amountInPercent": {
-                  "type": "number"
-                }
-              },
-              "required": [
-                "product",
-                "amountInPercent"
-              ]
-            }
-          },
-          "providedNeedUpgrade": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "additionalNeedsDemand": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
           },
           "additionalOutputs": {
             "type": "array",
@@ -1818,12 +1763,6 @@
                 "oldInput"
               ]
             }
-          },
-          "dlcUnlocks": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
           }
         },
         "required": [
@@ -1839,8 +1778,7 @@
           "fertilityPercent",
           "replaceWorkforce",
           "workforceMaintenanceFactorUpgrade",
-          "population",
-          "consumptionModifierInPercent"
+          "population"
         ]
       },
       "title": "BuildingBuff",
@@ -2018,40 +1956,29 @@
           "targetsIsAllProduction": {
             "type": "boolean"
           },
+          "effectScope": {
+            "type": "string"
+          },
           "excludeEffectSourceGUID": {
             "type": "boolean"
           },
           "effectDuration": {
             "type": "integer"
           },
-          "effectScope": {
-            "type": "string"
-          },
           "source": {
             "type": "string"
-          },
-          "boostBuffs": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "dlcUnlocks": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
           }
         },
         "required": [
           "guid",
           "name",
           "iconPath",
+          "locaText",
           "buffs",
           "targetsIsAllProduction",
+          "effectScope",
           "excludeEffectSourceGUID",
           "effectDuration",
-          "effectScope",
           "source"
         ]
       },
@@ -2309,12 +2236,6 @@
           },
           "wonder": {
             "type": "integer"
-          },
-          "dlcUnlocks": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
           }
         },
         "required": [
@@ -2416,27 +2337,13 @@
           },
           "rarity": {
             "type": "string"
-          },
-          "dlcUnlocks": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "boostBuffs": {
-            "type": "array",
-            "items": {
-              "type": "integer"
-            }
           }
         },
         "required": [
           "guid",
           "name",
           "iconPath",
-          "locaText",
           "buffs",
-          "targets",
           "effectScope",
           "excludeEffectSourceGUID",
           "rarity"
