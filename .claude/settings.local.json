@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run build:*)",
+      "Bash(rm:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node:*)",
+      "Bash(npm run generate-types:*)",
+      "mcp__memory__search_nodes",
+      "mcp__memory__create_entities",
+      "WebFetch(domain:www.anno-union.com)",
+      "WebSearch",
+      "Bash(npm test)",
+      "Bash(npm install)",
+      "Bash(npm run test:factory-dialogs:*)",
+      "Bash(cat:*)",
+      "Bash(tee:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(git add:*)",
+      "Bash(npm run test:module-boost:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run check-translations:*)",
+      "WebFetch(domain:anno117-kalkulator.de)",
+      "WebFetch(domain:anno.land)",
+      "Bash(npm run generate-sitemap:*)",
+      "SlashCommand(/translate:*)",
+      "Bash(git log:*)",
+      "Bash(mkdir:*)",
+      "Bash(if [ -f .gitattributes ])",
+      "Bash(then cat .gitattributes)",
+      "Bash(else echo \"File does not exist\")",
+      "Bash(fi)",
+      "Bash(git config:*)",
+      "Bash(python -c ':*)",
+      "WebFetch(domain:)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(awk '/\"guid\": 166475,/{f=1} f&&/\"iconPath\"/{print; exit}' js/params.js)"
+    ],
+    "deny": []
+  },
+  "enabledMcpjsonServers": [
+    "memory"
+  ]
+}

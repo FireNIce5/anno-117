@@ -1,12 +1,3 @@
 User-agent: *
-Allow: /
-
-# Sitemap
-Sitemap: https://anno-mods.github.io/anno-117-calculator/sitemap.xml
-
-# Disallow admin/development files
-Disallow: /node_modules/
-Disallow: /src/
-Disallow: /tests/
-Disallow: /.git/
-Disallow: /logs/
+Disallow: /
+Sitemap: https://117.firenice.cc/sitemap.xml
