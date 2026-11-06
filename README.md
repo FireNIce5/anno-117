@@ -1,6 +1,7 @@
 Cloned from https://github.com/anno-mods/anno-117-calculator
   
-release: v3.1 - 16ce9aa - Sept 19, 2026 (Game Update 2.1)  \
+release: v4.0 - 520ce4e - Nov 5, 2026 (Game Update 3.0)
+~~release: v3.1 - 16ce9aa - Sept 19, 2026 (Game Update 2.1)~~  \
 ~~release: v3.0 - 28969c3 - Aug 20, 2026 (Game Update 2.0)~~\
 ~~release: v2.1 - c6a6e75 - May 30, 2026 (Game Update 1.5.2)~~\
 ~~release: v2.0 - 828861a - Apr 30, 2026 (Game Update 1.5.1)~~\
