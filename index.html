@@ -173,6 +173,7 @@
 
             <!-- population input field -->
             <fieldset class="ui-fieldset" id="residents-view">
+                <button class="btn btn-light float-right" data-bind="click: () => $root.island().reset()"><span class="fa fa-refresh"></span> Reset</button>
                 <legend data-bind="text:$root.texts.residents.name">Residents</legend>
 
                     <div class="ui-tier-input inline-list">
