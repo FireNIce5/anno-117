@@ -35,7 +35,7 @@
   "author": "Nico Höllerich",
   "license": "MIT",
   "dependencies": {
-    "compression-webpack-plugin": "^11.1.0",
+    "compression-webpack-plugin": "^12.0.0",
     "html-loader": "^5.0.0",
     "knockout": "^3.5.1",
     "knockout-amd-helpers": "^1.0.0",
@@ -51,6 +51,6 @@
     "javascript-lp-solver": "^1.0.3",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-dev-server": "^6.1.0"
   }
 }
