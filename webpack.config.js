@@ -50,6 +50,12 @@ module.exports = {
       writeToDisk: true,
     },
   },
+  ignoreWarnings: [
+      {
+          module: /knockout-amd-helpers\.min\.js/,
+          message: /Critical dependency/
+      }
+  ],
   optimization: {
 	  minimize: true
   },

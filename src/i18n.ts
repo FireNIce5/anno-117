@@ -886,12 +886,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>Este software está sob a licença MIT.</p><br/>
 
-<h5>Autor</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>Autor</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>Bugs e melhorias</h5>
-<span>Se você encontrar algum bug ou inconveniência ou se quiser sugerir melhorias, junte-se ao servidor Discord (veja o link acima) ou abra uma Issue no GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
+//<h5>Bugs e melhorias</h5>
+//<span>Se você encontrar algum bug ou inconveniência ou se quiser sugerir melhorias, junte-se ao servidor Discord (veja o link acima) ou abra uma Issue no GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
 
         russian: `<h5>Использование и Структура</h5>
 <p>Введите текущее количество резиденций для каждого уровня в верхнюю строку. Производственные цепочки автоматически обновятся, когда вы покинете поле ввода. Отображаются только необходимые товары.</p>
@@ -954,12 +954,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>Это программное обеспечение распространяется под лицензией MIT.</p><br/>
 
-<h5>Автор</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>Автор</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>Ошибки и улучшения</h5>
-<span>Если вы столкнулись с какими-либо ошибками или неудобствами или если вы хотите предложить улучшения, присоединяйтесь к серверу Discord (см. ссылку выше) или откройте Issue на GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
+//<h5>Ошибки и улучшения</h5>
+//<span>Если вы столкнулись с какими-либо ошибками или неудобствами или если вы хотите предложить улучшения, присоединяйтесь к серверу Discord (см. ссылку выше) или откройте Issue на GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
 
         polish: `<h5>Użytkowanie i Struktura</h5>
 <p>Wprowadź obecną liczbę rezydencji dla każdego poziomu w górnym wierszu. Łańcuchy produkcyjne zostaną automatycznie zaktualizowane po opuszczeniu pola wprowadzania. Wyświetlane są tylko wymagane towary.</p>
@@ -1022,12 +1022,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>To oprogramowanie jest objęte licencją MIT.</p><br/>
 
-<h5>Autor</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>Autor</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>Błędy i ulepszenia</h5>
-<span>Jeśli napotkasz jakiekolwiek błędy lub niedogodności lub jeśli chcesz zasugerować ulepszenia, dołącz do serwera Discord (zobacz link powyżej) lub otwórz Issue na GitHubie (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
+//<h5>Błędy i ulepszenia</h5>
+//<span>Jeśli napotkasz jakiekolwiek błędy lub niedogodności lub jeśli chcesz zasugerować ulepszenia, dołącz do serwera Discord (zobacz link powyżej) lub otwórz Issue na GitHubie (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
 
         korean: `<h5>사용법 및 구조</h5>
 <p>최상단 행에 레벨별 거주지의 현재 수를 입력하세요. 입력 필드를 벗어나면 생산 체인이 자동으로 업데이트됩니다. 필요한 물품만 표시됩니다.</p>
@@ -1090,12 +1090,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>이 소프트웨어는 MIT 라이선스를 따릅니다.</p><br/>
 
-<h5>저자</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>저자</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>버그 및 개선 사항</h5>
-<span>버그나 불편함을 발견하거나 개선 사항을 제안하고 싶다면 Discord 서버에 가입하거나(위 링크 참조) GitHub에서 Issue를 여십시오(</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
+//<h5>버그 및 개선 사항</h5>
+//<span>버그나 불편함을 발견하거나 개선 사항을 제안하고 싶다면 Discord 서버에 가입하거나(위 링크 참조) GitHub에서 Issue를 여십시오(</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
 
         japanese: `<h5>使用方法と構造</h5>
 <p>最上段に各レベルの住居の現在の数を入力してください。入力フィールドから離れると、生産チェーンが自動的に更新されます。必要な品物のみが表示されます。</p>
@@ -1158,12 +1158,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>このソフトウェアはMITライセンスの下にあります。</p><br/>
 
-<h5>著者</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>著者</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>バグと改善</h5>
-<span>バグや不便な点に遭遇した場合、または改善を提案したい場合は、Discordサーバーに参加する（上記のリンクを参照）か、GitHubでIssueを開いてください（</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>）</span>`,
+//<h5>バグと改善</h5>
+//<span>バグや不便な点に遭遇した場合、または改善を提案したい場合は、Discordサーバーに参加する（上記のリンクを参照）か、GitHubでIssueを開いてください（</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>）</span>`,
 
         italian: `<h5>Uso e Struttura</h5>
 <p>Inserisci il numero attuale di residenze per livello nella riga superiore. Le catene di produzione si aggiorneranno automaticamente quando si lascia il campo di input. Vengono visualizzati solo i beni richiesti.</p>
@@ -1226,12 +1226,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>Questo software è sotto licenza MIT.</p><br/>
 
-<h5>Autore</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>Autore</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>Bug e miglioramenti</h5>
-<span>Se si verificano bug o inconvenienti o se si desidera suggerire miglioramenti, unisciti al server Discord (vedi link sopra) o apri una Issue su GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
+//<h5>Bug e miglioramenti</h5>
+//<span>Se si verificano bug o inconvenienti o se si desidera suggerire miglioramenti, unisciti al server Discord (vedi link sopra) o apri una Issue su GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
 
         german:
             `<h5>Verwendung und Aufbau</h5>
@@ -1296,12 +1296,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>Diese Software steht unter der MIT-Lizenz.</p><br/>
 
-<h5>Autor</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>Autor</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>Fehler und Verbesserungen</h5>
-<span>Um auf Fehler oder Unannehmlichkeiten hinzuweisen oder Verbesserungen vorzuschlagen, tritt dem Discord-Server bei (siehe Link oben) oder eröffne ein Issue auf GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
+//<h5>Fehler und Verbesserungen</h5>
+//<span>Um auf Fehler oder Unannehmlichkeiten hinzuweisen oder Verbesserungen vorzuschlagen, tritt dem Discord-Server bei (siehe Link oben) oder eröffne ein Issue auf GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
 
 
         english:
@@ -1367,12 +1367,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>This software is under the MIT license.</p><br/>
 
-<h5>Author</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>Author</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>Bugs and improvements</h5>
-<span>If you encounter any bugs or inconveniences or if you want to suggest improvements, join the Discord server (see link above) or open an Issue on GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
+//<h5>Bugs and improvements</h5>
+//<span>If you encounter any bugs or inconveniences or if you want to suggest improvements, join the Discord server (see link above) or open an Issue on GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
 
         french: `<h5>Utilisation et Structure</h5>
 <p>Entrez le nombre actuel de résidences par niveau dans la ligne supérieure. Les chaînes de production se mettront à jour automatiquement lorsque vous quitterez le champ de saisie. Seuls les biens nécessaires sont affichés.</p>
@@ -1435,12 +1435,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>Ce logiciel est sous licence MIT.</p><br/>
 
-<h5>Auteur</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>Auteur</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>Bugs et améliorations</h5>
-<span>Si vous rencontrez des bugs ou des désagréments ou si vous souhaitez suggérer des améliorations, rejoignez le serveur Discord (voir le lien ci-dessus) ou ouvrez une Issue sur GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
+//<h5>Bugs et améliorations</h5>
+//<span>Si vous rencontrez des bugs ou des désagréments ou si vous souhaitez suggérer des améliorations, rejoignez le serveur Discord (voir le lien ci-dessus) ou ouvrez une Issue sur GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`,
 
         traditional_chinese:
                 `<h5>使用方式與結構</h5>
@@ -1504,12 +1504,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>本軟體採用 MIT 授權條款。</p><br/>
 
-<h5>作者</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>作者</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>錯誤回報與改進建議</h5>
-<span>如果您遇到任何錯誤或不便之處，或想建議改進，請加入 Discord 伺服器（見上方連結）或在 GitHub 上建立 Issue（</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>）</span>`,
+//<h5>錯誤回報與改進建議</h5>
+//<span>如果您遇到任何錯誤或不便之處，或想建議改進，請加入 Discord 伺服器（見上方連結）或在 GitHub 上建立 Issue（</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>）</span>`,
 
         simplified_chinese: `<h5>使用方法和结构</h5>
 <p>在顶部一行输入每个等级的当前住宅数量。当您离开输入字段时，生产链将自动更新。仅显示所需的商品。</p>
@@ -1572,12 +1572,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>此软件采用MIT许可证。</p><br/>
 
-<h5>作者</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>作者</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>错误和改进</h5>
-<span>如果您遇到任何错误或不便，或者想建议改进，请加入Discord服务器（见上方链接）或在GitHub上创建Issue（</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>）</span>`,
+//<h5>错误和改进</h5>
+//<span>如果您遇到任何错误或不便，或者想建议改进，请加入Discord服务器（见上方链接）或在GitHub上创建Issue（</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>）</span>`,
 
         spanish: `<h5>Uso y Estructura</h5>
 <p>Introduce el número actual de residencias por nivel en la fila superior. Las cadenas de producción se actualizarán automáticamente cuando salgas del campo de entrada. Solo se muestran los bienes necesarios.</p>
@@ -1640,12 +1640,12 @@ export const texts: Record<string, Record<string, string>> = {
 
 <p>Este software está bajo la licencia MIT.</p><br/>
 
-<h5>Autor</h5>
-<p>Nico Höllerich</p>
-<p>hoellerich.nico@freenet.de</p><br/>
+//<h5>Autor</h5>
+//<p>Nico Höllerich</p>
+//<p>hoellerich.nico@freenet.de</p><br/>
 
-<h5>Errores y Mejoras</h5>
-<span>Si encuentras algún error o inconveniente o si quieres sugerir mejoras, únete al servidor de Discord (ver enlace arriba) o abre un Issue en GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`
+//<h5>Errores y Mejoras</h5>
+//<span>Si encuentras algún error o inconveniente o si quieres sugerir mejoras, únete al servidor de Discord (ver enlace arriba) o abre un Issue en GitHub (</span><a href="https://github.com/anno-mods/anno-117-calculator/issues">https://github.com/anno-mods/anno-117-calculator/issues</a><span>)</span>`
     },
 };
 
