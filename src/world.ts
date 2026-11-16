@@ -1291,6 +1291,13 @@ export class Island {
         });
     }
     
+ reset(): void {
+    window.localStorage.setItem(
+        this.storage.key,
+        JSON.stringify({ session: this.session.guid })
+    );
+    window.location.reload();
+}
 
     /**
      * Prepares the residence effect view for this island
